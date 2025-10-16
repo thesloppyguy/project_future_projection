@@ -1,0 +1,4 @@
+/.pnpm/**            linguist-vendored
+/.pnpm/releases/*    binary
+/.pnpm/plugins/**/*  binary
+/.pnp.*              binary linguist-generated

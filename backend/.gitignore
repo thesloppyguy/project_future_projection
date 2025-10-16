@@ -1,0 +1,49 @@
+.pnpm/*
+!.pnpm/patches
+!.pnpm/plugins
+!.pnpm/releases
+!.pnpm/sdks
+!.pnpm/versions
+
+# Swap the comments on the following lines if you wish to use zero-installs
+# In that case, don't forget to run `pnpm config set enableGlobalCache false`!
+# Documentation here: https://pnpm.io/features/caching#zero-installs
+
+#!.pnpm/cache
+.pnp.*
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+pnpm-error.log*
+pnpm-debug.log*
+pnpm-error.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+.cache
+traces
+screenshots
+reports
+coverage
+.env
+.specstory
+.history
+.cursor
+node_modules
+dist
