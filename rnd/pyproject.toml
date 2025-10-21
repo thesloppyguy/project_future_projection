@@ -16,6 +16,8 @@ dependencies = [
     "prophet>=1.1.4",
     "jupyter>=1.0.0",
     "ipykernel>=7.0.1",
+    "pmdarima>=2.0.4",
+    "numpy>=2.3.4",
 ]
 
 [dependency-groups]
