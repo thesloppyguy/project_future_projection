@@ -199,15 +199,17 @@ class SalesForecastingModel:
         # Select features
         weather_features = ['Max_Temp', 'Min_Temp',
                             'Humidity', 'Wind_Speed', 'temp_avg', 'temp_range']
-        lag_features = [col for col in train_data.columns if 'lag_' in col]
-        rolling_features = [
-            col for col in train_data.columns if 'rolling_' in col]
 
-        # Use a subset of features to avoid overfitting
-        selected_features = weather_features + \
-            lag_features[:6] + rolling_features[:4]
-        selected_features = [
-            col for col in selected_features if col in train_data.columns]
+        # Only include truly exogenous weather lag features (no sales-derived lags)
+        weather_base_for_lags = ['Max_Temp', 'Min_Temp', 'Humidity', 'Wind_Speed', 'temp_avg']
+        weather_lag_features = []
+        for col in weather_base_for_lags:
+            for lag in [1, 12]:
+                feature_name = f'{col}_lag_{lag}'
+                if feature_name in train_data.columns:
+                    weather_lag_features.append(feature_name)
+
+        selected_features = weather_features + weather_lag_features
 
         self.feature_names = selected_features
 
@@ -253,15 +255,31 @@ class SalesForecastingModel:
 
         print(f"Making predictions for {steps} periods...")
 
-        # Prepare test features
-        test_features = test_data[selected_features].fillna(
-            method='ffill').fillna(method='bfill')
+        # Prepare test features without lookahead leakage
+        test_features = test_data[selected_features].copy()
+        # Forward-fill only (no backfill) to avoid using future information
+        test_features = test_features.fillna(method='ffill')
 
-        # Make predictions
-        pred = self.results.get_forecast(
-            steps=steps, exog=test_features.iloc[:steps])
-        pred_mean = pred.predicted_mean
-        pred_ci = pred.conf_int()
+        # If initial rows still contain NaNs (e.g., insufficient history for some lags),
+        # skip them for forecasting and left-pad NaNs in the returned series to keep alignment
+        valid_mask = test_features.notna().all(axis=1)
+        if not valid_mask.any():
+            raise ValueError("No valid exogenous rows available for forecasting after forward fill.")
+
+        # First index with all features present
+        first_valid_pos = int(np.argmax(valid_mask.values))
+        exog_valid = test_features.iloc[first_valid_pos:steps]
+        steps_valid = len(exog_valid)
+
+        pred = self.results.get_forecast(steps=steps_valid, exog=exog_valid.iloc[:steps_valid])
+
+        # Re-align predictions to original test horizon
+        pred_mean = pd.Series([np.nan] * steps)
+        pred_mean.iloc[first_valid_pos:first_valid_pos + steps_valid] = pred.predicted_mean.values
+
+        pred_ci_raw = pred.conf_int()
+        pred_ci = pd.DataFrame(np.nan, index=range(steps), columns=pred_ci_raw.columns)
+        pred_ci.iloc[first_valid_pos:first_valid_pos + steps_valid, :] = pred_ci_raw.values
 
         return pred_mean, pred_ci
 
@@ -416,8 +434,8 @@ def main():
     # Initialize the model
     forecaster = SalesForecastingModel(
         state='Tamil Nadu',
-        star_rating='1 Star',
-        tonnage=1.8
+        star_rating='3 Star',
+        tonnage=1.5
     )
 
     # Run the complete pipeline
