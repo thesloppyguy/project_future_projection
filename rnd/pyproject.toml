@@ -9,6 +9,7 @@ dependencies = [
     "darts>=0.38.0",
     "lightgbm>=4.6.0",
     "matplotlib>=3.10.7",
+    "meteostat>=1.7.6",
     "nixtla>=0.7.0",
     "numpy>=2.3.4",
     "openpyxl>=3.1.5",

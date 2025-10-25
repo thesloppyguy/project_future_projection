@@ -1536,6 +1536,20 @@ wheels = [
 ]
 
 [[package]]
+name = "meteostat"
+version = "1.7.6"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+    { name = "pandas" },
+    { name = "pytz" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/45/1b/6167e471275417787d1d1bf518c24e3168c2b5054bcfa25f6e51dec51119/meteostat-1.7.6.tar.gz", hash = "sha256:2b83eedb21a940babe0ffa938be1471b99e55f54f8316ca92330c4eea22487bf", size = 20716, upload-time = "2025-10-07T06:16:34.325Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4e/11/0c73c9b733a80af11929774a0c3a7c7f4dee52a2ec3ffe9587b7a0e6deb2/meteostat-1.7.6-py3-none-any.whl", hash = "sha256:8a1d54f8d73a86f048a0a7a8c9b9aeea17126ec316ff13ef4ab2254135c43982", size = 33297, upload-time = "2025-10-07T06:16:32.876Z" },
+]
+
+[[package]]
 name = "ml-dtypes"
 version = "0.5.3"
 source = { registry = "https://pypi.org/simple" }
@@ -2955,6 +2969,7 @@ dependencies = [
     { name = "darts" },
     { name = "lightgbm" },
     { name = "matplotlib" },
+    { name = "meteostat" },
     { name = "nixtla" },
     { name = "numpy" },
     { name = "openpyxl" },
@@ -2981,6 +2996,7 @@ requires-dist = [
     { name = "darts", specifier = ">=0.38.0" },
     { name = "lightgbm", specifier = ">=4.6.0" },
     { name = "matplotlib", specifier = ">=3.10.7" },
+    { name = "meteostat", specifier = ">=1.7.6" },
     { name = "nixtla", specifier = ">=0.7.0" },
     { name = "numpy", specifier = ">=2.3.4" },
     { name = "openpyxl", specifier = ">=3.1.5" },
