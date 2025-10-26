@@ -1,0 +1,25 @@
+{
+  "type": "user",
+  "name": "user.created",
+  "timestamp": "2024-01-15T10:30:00.000Z",
+  "test": true,
+  "data": {
+    "userId": "user_123456789",
+    "email": "john.doe@example.com",
+    "name": "John Doe",
+    "organizationId": "org_987654321",
+    "teamId": "team_456789123",
+    "role": "team_user",
+    "status": "active",
+    "metadata": {
+      "source": "webhook_test",
+      "version": "1.0",
+      "environment": "development"
+    }
+  },
+  "context": {
+    "ipAddress": "192.168.1.100",
+    "userAgent": "WebhookTestScript/1.0",
+    "requestId": "req_abc123def456"
+  }
+}
