@@ -26,8 +26,8 @@ import numpy as np
 import pandas as pd
 import logging
 from prophet import Prophet
-from tensorflow import keras
-from tensorflow.keras import layers
+import keras
+from keras import layers
 from itertools import product
 try:
     import keras_tuner as kt
@@ -160,80 +160,6 @@ def create_ml_features(branch_df, anchor_month=3, season_years_back=1, lags=[1, 
     return df
 
 
-print(branches)
-# Run all branches and models for multiple lookback configs
-lookback_results = {}
-for lookback in [1, 2, 3]:
-    logger.info(f"Starting pipeline with season_years_back={lookback}")
-    this_fe_branch_dfs = {}
-    for branch_name, branch_df in branch_dfs.items():
-        this_fe_branch_dfs[branch_name] = create_ml_features(
-            branch_df, season_years_back=lookback)
-    # Model results per branch
-    lgb_results = {}
-    xgb_results = {}
-    catboost_results = {}
-    prophet_results = {}
-    keras_lstm_results = {}
-    keras_gru_results = {}
-    keras_rnn_results = {}
-    keras_cnn_lstm_results = {}
-    for branch_name, feature_branch in this_fe_branch_dfs.items():
-        ml_data = prepare_ml_data(feature_branch)
-        lgb_results[branch_name] = train_lightgbm_model(
-            ml_data['X_train'], ml_data['y_train'],
-            ml_data['X_val'], ml_data['y_val'],
-            ml_data['X_test'], ml_data['y_test'],
-            ml_data['feature_cols'])
-        xgb_results[branch_name] = train_xgboost_model(
-            ml_data['X_train'], ml_data['y_train'],
-            ml_data['X_val'], ml_data['y_val'],
-            ml_data['X_test'], ml_data['y_test'],
-            ml_data['feature_cols'])
-        catboost_results[branch_name] = train_catboost_model(
-            ml_data['X_train'], ml_data['y_train'],
-            ml_data['X_val'], ml_data['y_val'],
-            ml_data['X_test'], ml_data['y_test'],
-            ml_data['feature_cols'])
-
-        # Prophet with extra regressors (all advanced features except target & date)
-        reg_cols = [
-            c for c in feature_branch.columns if c not in ['Date', 'Qty']]
-        prophet_metrics = train_prophet_model(
-            feature_branch, target_col='Qty', regressors=reg_cols, periods=12)
-        prophet_results[branch_name] = prophet_metrics
-        # Keras deep learning models
-        keras_lstm_results[branch_name] = train_and_evaluate_keras_model(
-            feature_branch, reg_cols, 'Qty', build_lstm_model)
-        keras_gru_results[branch_name] = train_and_evaluate_keras_model(
-            feature_branch, reg_cols, 'Qty', build_gru_model)
-        keras_rnn_results[branch_name] = train_and_evaluate_keras_model(
-            feature_branch, reg_cols, 'Qty', build_rnn_model)
-        keras_cnn_lstm_results[branch_name] = train_and_evaluate_keras_model(
-            feature_branch, reg_cols, 'Qty', build_cnn_lstm_model)
-
-    lookback_results[lookback] = {
-        'lgb': lgb_results,
-        'xgb': xgb_results,
-        'catboost': catboost_results,
-        'prophet': prophet_results,
-        'lstm': keras_lstm_results,
-        'gru': keras_gru_results,
-        'rnn': keras_rnn_results,
-        'cnn_lstm': keras_cnn_lstm_results
-    }
-    logger.info(f"Results for season_years_back={lookback}")
-    logger.info(f"LightGBM: {lgb_results}")
-    logger.info(f"XGBoost: {xgb_results}")
-    logger.info(f"CatBoost: {catboost_results}")
-    logger.info(f"Prophet: {prophet_results}")
-    logger.info(f"LSTM: {keras_lstm_results}")
-    logger.info(f"GRU: {keras_gru_results}")
-    logger.info(f"RNN: {keras_rnn_results}")
-    logger.info(f"CNN-LSTM: {keras_cnn_lstm_results}")
-    logger.info("-"*100)
-
-
 # =============================================================================
 # 4. LIGHTGBM MODEL IMPLEMENTATION
 # =============================================================================
@@ -257,456 +183,13 @@ def calculate_metrics(y_true, y_pred, model_name="Model"):
     }
 
 
-def train_lightgbm_model(X_train, y_train, X_val, y_val, X_test, y_test, feature_cols):
-    """Train LightGBM model with hyperparameter tuning"""
-    baseline_params = {
-        'objective': 'regression',
-        'metric': 'mae',
-        'boosting_type': 'gbdt',
-        'num_leaves': 31,
-        'learning_rate': 0.1,
-        'feature_fraction': 0.9,
-        'bagging_fraction': 0.8,
-        'bagging_freq': 5,
-        'verbose': -1,
-        'random_state': 42
-    }
-
-    # Create datasets
-    train_data = lgb.Dataset(X_train, label=y_train)
-    val_data = lgb.Dataset(X_val, label=y_val, reference=train_data)
-
-    # Train baseline model
-    baseline_model = lgb.train(
-        baseline_params,
-        train_data,
-        valid_sets=[val_data],
-        num_boost_round=1000,
-        callbacks=[lgb.early_stopping(100), lgb.log_evaluation(0)]
-    )
-
-    # Make predictions
-    baseline_train_pred = baseline_model.predict(X_train)
-    baseline_val_pred = baseline_model.predict(X_val)
-    baseline_test_pred = baseline_model.predict(X_test)
-
-    # Calculate metrics
-    baseline_train_metrics = calculate_metrics(
-        y_train, baseline_train_pred, "LightGBM Baseline Train")
-    baseline_val_metrics = calculate_metrics(
-        y_val, baseline_val_pred, "LightGBM Baseline Val")
-    baseline_test_metrics = calculate_metrics(
-        y_test, baseline_test_pred, "LightGBM Baseline Test")
-
-    logger.info(
-        f"LightGBM Baseline validation RMSE: {baseline_val_metrics['RMSE']:.4f}")
-    logger.info(
-        f"LightGBM Baseline validation R²: {baseline_val_metrics['R2']:.4f}")
-
-    # Define parameter grid for tuning
-    param_grid = {
-        'num_leaves': [31, 50, 100, 200],
-        'learning_rate': [0.01, 0.05, 0.1, 0.2],
-        'feature_fraction': [0.8, 0.9, 0.95, 1.0],
-        'bagging_fraction': [0.8, 0.9, 0.95, 1.0],
-        'bagging_freq': [5, 10, 15],
-        'min_child_samples': [20, 30, 50],
-        'reg_alpha': [0, 0.1, 0.5, 1.0],
-        'reg_lambda': [0, 0.1, 0.5, 1.0]
-    }
-
-    # Use RandomizedSearchCV for efficiency
-    lgb_model = lgb.LGBMRegressor(
-        objective='regression',
-        metric='mae',
-        boosting_type='gbdt',
-        verbose=-1,
-        random_state=42,
-        n_estimators=1000
-    )
-
-    # Randomized search
-    random_search = RandomizedSearchCV(
-        lgb_model,
-        param_grid,
-        n_iter=50,  # Number of parameter settings sampled
-        cv=tscv,
-        scoring='neg_mean_squared_error',
-        random_state=42,
-        n_jobs=-1,
-        verbose=1
-    )
-
-    # Fit the model
-    random_search.fit(X_train, y_train,
-                      eval_set=[(X_val, y_val)],
-                      callbacks=[lgb.early_stopping(100), lgb.log_evaluation(0)])
-
-    # Get best parameters
-    best_params = random_search.best_params_
-
-    # Update parameters with best found
-    final_params = baseline_params.copy()
-    final_params.update(best_params)
-
-    # Train final model
-    final_model = lgb.train(
-        final_params,
-        train_data,
-        valid_sets=[val_data],
-        num_boost_round=1000,
-        callbacks=[lgb.early_stopping(100), lgb.log_evaluation(0)]
-    )
-
-    # Make predictions with final model
-    final_train_pred = final_model.predict(X_train)
-    final_val_pred = final_model.predict(X_val)
-    final_test_pred = final_model.predict(X_test)
-
-    # Calculate final metrics
-    final_train_metrics = calculate_metrics(
-        y_train, final_train_pred, "LightGBM Final Train")
-    final_val_metrics = calculate_metrics(
-        y_val, final_val_pred, "LightGBM Final Val")
-    final_test_metrics = calculate_metrics(
-        y_test, final_test_pred, "LightGBM Final Test")
-
-    logger.info(
-        f"LightGBM Final validation RMSE: {final_val_metrics['RMSE']:.4f}")
-    logger.info(f"LightGBM Final validation R²: {final_val_metrics['R2']:.4f}")
-
-    # 4. Feature Importance Analysis
-    logger.info("  Analyzing LightGBM feature importance...")
-    feature_importance = final_model.feature_importance(importance_type='gain')
-    feature_names = feature_cols
-
-    # Create feature importance dataframe
-    logger.debug(feature_importance)
-    logger.debug(feature_names)
-    importance_df = pd.DataFrame({
-        'feature': feature_names,
-        'importance': feature_importance
-    }).sort_values('importance', ascending=False)
-
-    logger.info(f"    Top 10 most important LightGBM features:")
-    for i, (_, row) in enumerate(importance_df.head(10).iterrows()):
-        logger.info(f"      {i+1}. {row['feature']}: {row['importance']:.4f}")
-
-    # 5. Model Comparison
-    logger.info("  LightGBM model performance comparison:")
-    logger.info(f"    Baseline vs Final Model:")
-    logger.info(
-        f"      Validation RMSE: {baseline_val_metrics['RMSE']:.4f} → {final_val_metrics['RMSE']:.4f}")
-    logger.info(
-        f"      Validation R²: {baseline_val_metrics['R2']:.4f} → {final_val_metrics['R2']:.4f}")
-
-    improvement_rmse = (
-        (baseline_val_metrics['RMSE'] - final_val_metrics['RMSE']) / baseline_val_metrics['RMSE']) * 100
-    improvement_r2 = (
-        (final_val_metrics['R2'] - baseline_val_metrics['R2']) / abs(baseline_val_metrics['R2'])) * 100
-
-    logger.info(f"      RMSE improvement: {improvement_rmse:.2f}%")
-    logger.info(f"      R² improvement: {improvement_r2:.2f}%")
-
-    return {
-        'baseline_model': baseline_model,
-        'final_model': final_model,
-        'best_params': best_params,
-        'baseline_metrics': {
-            'train': baseline_train_metrics,
-            'val': baseline_val_metrics,
-            'test': baseline_test_metrics
-        },
-        'final_metrics': {
-            'train': final_train_metrics,
-            'val': final_val_metrics,
-            'test': final_test_metrics
-        },
-        'feature_importance': importance_df,
-        'predictions': {
-            'baseline': {
-                'train': baseline_train_pred,
-                'val': baseline_val_pred,
-                'test': baseline_test_pred
-            },
-            'final': {
-                'train': final_train_pred,
-                'val': final_val_pred,
-                'test': final_test_pred
-            }
-        },
-    }
-
 # =============================================================================
 # 5. XGBOOST MODEL IMPLEMENTATION
 # =============================================================================
 
-
 logger.info("\n5. XGBOOST MODEL IMPLEMENTATION")
 logger.info("-" * 50)
 
-
-def train_xgboost_model(X_train, y_train, X_val, y_val, X_test, y_test, feature_cols):
-    """Train XGBoost model with hyperparameter tuning"""
-
-    logger.info("Training XGBoost model...")
-
-    # 1. Baseline XGBoost Model
-    logger.info("  Training baseline XGBoost model...")
-    start_time = time.time()
-
-    baseline_params = {
-        'objective': 'reg:squarederror',
-        'eval_metric': 'mae',
-        'max_depth': 6,
-        'learning_rate': 0.1,
-        'n_estimators': 1000,
-        'subsample': 0.8,
-        'colsample_bytree': 0.8,
-        'random_state': 42,
-        'verbosity': 0
-    }
-
-    # Train baseline model
-    baseline_model = xgb.XGBRegressor(**baseline_params)
-    baseline_model.fit(
-        X_train, y_train,
-        eval_set=[(X_val, y_val)],
-        verbose=False
-    )
-
-    # Make predictions
-    baseline_train_pred = baseline_model.predict(X_train)
-    baseline_val_pred = baseline_model.predict(X_val)
-    baseline_test_pred = baseline_model.predict(X_test)
-
-    # Calculate metrics
-    baseline_train_metrics = calculate_metrics(
-        y_train, baseline_train_pred, "XGBoost Baseline Train")
-    baseline_val_metrics = calculate_metrics(
-        y_val, baseline_val_pred, "XGBoost Baseline Val")
-    baseline_test_metrics = calculate_metrics(
-        y_test, baseline_test_pred, "XGBoost Baseline Test")
-
-    logger.info(
-        f"    XGBoost Baseline validation RMSE: {baseline_val_metrics['RMSE']:.4f}")
-    logger.info(
-        f"    XGBoost Baseline validation R²: {baseline_val_metrics['R2']:.4f}")
-
-    # 2. Hyperparameter Tuning
-    logger.info("  Performing hyperparameter tuning...")
-    start_time = time.time()
-
-    # Define parameter grid for tuning
-    param_grid = {
-        'max_depth': [3, 4, 5, 6, 7, 8],
-        'learning_rate': [0.01, 0.05, 0.1, 0.15, 0.2],
-        'n_estimators': [500, 800, 1000, 1200],
-        'subsample': [0.6, 0.7, 0.8, 0.9, 1.0],
-        'colsample_bytree': [0.6, 0.7, 0.8, 0.9, 1.0],
-        'colsample_bylevel': [0.6, 0.7, 0.8, 0.9, 1.0],
-        'colsample_bynode': [0.6, 0.7, 0.8, 0.9, 1.0],
-        'reg_alpha': [0, 0.1, 0.5, 1.0],
-        'reg_lambda': [0, 0.1, 0.5, 1.0, 2.0],
-        'gamma': [0, 0.1, 0.5, 1.0],
-        'min_child_weight': [1, 3, 5, 7]
-    }
-
-    # Use RandomizedSearchCV for efficiency
-    xgb_model = xgb.XGBRegressor(
-        objective='reg:squarederror',
-        eval_metric='mae',
-        random_state=42,
-        verbosity=0
-    )
-
-    # Randomized search
-    random_search = RandomizedSearchCV(
-        xgb_model,
-        param_grid,
-        n_iter=50,  # Number of parameter settings sampled
-        cv=tscv,
-        scoring='neg_mean_squared_error',
-        random_state=42,
-        n_jobs=-1,
-        verbose=1
-    )
-
-    # Fit the model
-    random_search.fit(X_train, y_train,
-                      eval_set=[(X_val, y_val)],
-                      verbose=False)
-
-    tuning_time = time.time() - start_time
-
-    # Get best parameters
-    best_params = random_search.best_params_
-    logger.info(f"    Best parameters: {best_params}")
-    logger.info(f"    Tuning time: {tuning_time:.2f} seconds")
-
-    # 3. Train Final Model with Best Parameters
-    logger.info("  Training final model with best parameters...")
-    start_time = time.time()
-
-    # Update parameters with best found
-    final_params = baseline_params.copy()
-    final_params.update(best_params)
-
-    # Train final model
-    final_model = xgb.XGBRegressor(**final_params)
-    final_model.fit(
-        X_train, y_train,
-        eval_set=[(X_val, y_val)],
-        verbose=False
-    )
-
-    final_time = time.time() - start_time
-
-    # Make predictions with final model
-    final_train_pred = final_model.predict(X_train)
-    final_val_pred = final_model.predict(X_val)
-    final_test_pred = final_model.predict(X_test)
-
-    # Calculate final metrics
-    final_train_metrics = calculate_metrics(
-        y_train, final_train_pred, "XGBoost Final Train")
-    final_val_metrics = calculate_metrics(
-        y_val, final_val_pred, "XGBoost Final Val")
-    final_test_metrics = calculate_metrics(
-        y_test, final_test_pred, "XGBoost Final Test")
-
-    logger.info(f"    Final XGBoost training time: {final_time:.2f} seconds")
-    logger.info(
-        f"    XGBoost Final validation RMSE: {final_val_metrics['RMSE']:.4f}")
-    logger.info(
-        f"    XGBoost Final validation R²: {final_val_metrics['R2']:.4f}")
-
-    # 4. Feature Importance Analysis
-    logger.info("  Analyzing XGBoost feature importance...")
-    feature_importance = final_model.feature_importances_
-    feature_names = feature_cols
-
-    # Create feature importance dataframe
-    importance_df = pd.DataFrame({
-        'feature': feature_names,
-        'importance': feature_importance
-    }).sort_values('importance', ascending=False)
-
-    logger.info(f"    Top 10 most important XGBoost features:")
-    for i, (_, row) in enumerate(importance_df.head(10).iterrows()):
-        logger.info(f"      {i+1}. {row['feature']}: {row['importance']:.4f}")
-
-    # 5. Model Comparison
-    logger.info("  XGBoost model performance comparison:")
-    logger.info(f"    Baseline vs Final Model:")
-    logger.info(
-        f"      Validation RMSE: {baseline_val_metrics['RMSE']:.4f} → {final_val_metrics['RMSE']:.4f}")
-    logger.info(
-        f"      Validation R²: {baseline_val_metrics['R2']:.4f} → {final_val_metrics['R2']:.4f}")
-
-    improvement_rmse = (
-        (baseline_val_metrics['RMSE'] - final_val_metrics['RMSE']) / baseline_val_metrics['RMSE']) * 100
-    improvement_r2 = (
-        (final_val_metrics['R2'] - baseline_val_metrics['R2']) / abs(baseline_val_metrics['R2'])) * 100
-
-    logger.info(f"      RMSE improvement: {improvement_rmse:.2f}%")
-    logger.info(f"      R² improvement: {improvement_r2:.2f}%")
-
-    # 6. Advanced XGBoost Features
-    logger.info("  Training advanced XGBoost model with additional features...")
-    start_time = time.time()
-
-    # Advanced parameters for better performance
-    advanced_params = final_params.copy()
-    advanced_params.update({
-        'tree_method': 'hist',  # Use histogram-based algorithm
-        'grow_policy': 'lossguide',  # Grow policy for better performance
-        'max_leaves': 0,  # Let max_depth control tree size
-        'max_bin': 256,  # Number of bins for histogram
-        'predictor': 'cpu_predictor',  # Use CPU predictor
-        'enable_categorical': False,  # Disable categorical features
-        'interaction_constraints': None,  # No interaction constraints
-        'monotone_constraints': None,  # No monotone constraints
-    })
-
-    # Train advanced model
-    advanced_model = xgb.XGBRegressor(**advanced_params)
-    advanced_model.fit(
-        X_train, y_train,
-        eval_set=[(X_val, y_val)],
-        verbose=False
-    )
-
-    advanced_time = time.time() - start_time
-
-    # Make predictions with advanced model
-    advanced_train_pred = advanced_model.predict(X_train)
-    advanced_val_pred = advanced_model.predict(X_val)
-    advanced_test_pred = advanced_model.predict(X_test)
-
-    # Calculate advanced metrics
-    advanced_train_metrics = calculate_metrics(
-        y_train, advanced_train_pred, "XGBoost Advanced Train")
-    advanced_val_metrics = calculate_metrics(
-        y_val, advanced_val_pred, "XGBoost Advanced Val")
-    advanced_test_metrics = calculate_metrics(
-        y_test, advanced_test_pred, "XGBoost Advanced Test")
-
-    logger.info(
-        f"    Advanced XGBoost training time: {advanced_time:.2f} seconds")
-    logger.info(
-        f"    Advanced XGBoost validation RMSE: {advanced_val_metrics['RMSE']:.4f}")
-    logger.info(
-        f"    Advanced XGBoost validation R²: {advanced_val_metrics['R2']:.4f}")
-
-    # Compare all XGBoost models
-    logger.info("  All XGBoost models comparison:")
-    logger.info(f"    Baseline RMSE: {baseline_val_metrics['RMSE']:.4f}")
-    logger.info(f"    Final RMSE: {final_val_metrics['RMSE']:.4f}")
-    logger.info(f"    Advanced RMSE: {advanced_val_metrics['RMSE']:.4f}")
-
-    best_model = 'Advanced' if advanced_val_metrics['RMSE'] < final_val_metrics['RMSE'] else 'Final'
-    logger.info(f"    Best XGBoost model: {best_model}")
-
-    return {
-        'baseline_model': baseline_model,
-        'final_model': final_model,
-        'advanced_model': advanced_model,
-        'best_params': best_params,
-        'baseline_metrics': {
-            'train': baseline_train_metrics,
-            'val': baseline_val_metrics,
-            'test': baseline_test_metrics
-        },
-        'final_metrics': {
-            'train': final_train_metrics,
-            'val': final_val_metrics,
-            'test': final_test_metrics
-        },
-        'advanced_metrics': {
-            'train': advanced_train_metrics,
-            'val': advanced_val_metrics,
-            'test': advanced_test_metrics
-        },
-        'feature_importance': importance_df,
-        'predictions': {
-            'baseline': {
-                'train': baseline_train_pred,
-                'val': baseline_val_pred,
-                'test': baseline_test_pred
-            },
-            'final': {
-                'train': final_train_pred,
-                'val': final_val_pred,
-                'test': final_test_pred
-            },
-            'advanced': {
-                'train': advanced_train_pred,
-                'val': advanced_val_pred,
-                'test': advanced_test_pred
-            }
-        },
-    }
 
 # =============================================================================
 # 6. CATBOOST MODEL IMPLEMENTATION
@@ -1117,8 +600,13 @@ def train_and_evaluate_keras_model(df, feature_cols, target_col, model_builder, 
               validation_data=(X_val, y_val), callbacks=callbacks, verbose=0)
     y_pred = model.predict(X_test).flatten()
     y_true = y_test.flatten()
+    # Remove NaN and inf from y_true, y_pred
+    valid = (~np.isnan(y_true)) & (~np.isnan(y_pred)) & (
+        ~np.isinf(y_true)) & (~np.isinf(y_pred))
+    y_true_valid = y_true[valid]
+    y_pred_valid = y_pred[valid]
     metrics = calculate_metrics(
-        y_true, y_pred, model_name=model_builder.__name__)
+        y_true_valid, y_pred_valid, model_name=model_builder.__name__)
     return metrics
 
 # (Integration into main loop + completed DL training functions next)
@@ -1178,8 +666,8 @@ def sweep_lightgbm(X_train, y_train, X_val, y_val, param_grid):
         params = dict(zip(keys, vals))
         model = lgb.LGBMRegressor(
             objective='regression', metric='mae', random_state=42, n_estimators=300, **params)
-        model.fit(X_train, y_train, eval_set=[(X_val, y_val)], callbacks=[
-                  lgb.early_stopping(30)], verbose=-1)
+        model.fit(X_train, y_train, eval_set=[
+                  (X_val, y_val)], callbacks=[lgb.early_stopping(30)])
         preds = model.predict(X_val)
         rmse = np.sqrt(mean_squared_error(y_val, preds))
         tried_configs.append({'params': params, 'rmse': rmse})
@@ -1244,6 +732,529 @@ def sweep_keras(X_train, y_train, X_val, y_val, build_model_fn, sweep_params):
 # logger.info(f"Best LightGBM params for {branch},{lookback}: {bp}, RMSE: {bs}")
 # logger.debug(f"All LightGBM tried configs: {tried}")
 # (Prophet, CatBoost, XGB, Keras swept analogously)
+
+
+def train_lightgbm_model(X_train, y_train, X_val, y_val, X_test, y_test, feature_cols):
+    """Train LightGBM model with hyperparameter tuning"""
+    baseline_params = {
+        'objective': 'regression',
+        'metric': 'mae',
+        'boosting_type': 'gbdt',
+        'num_leaves': 31,
+        'learning_rate': 0.1,
+        'feature_fraction': 0.9,
+        'bagging_fraction': 0.8,
+        'bagging_freq': 5,
+        'verbose': -1,
+        'random_state': 42
+    }
+
+    # Create datasets
+    train_data = lgb.Dataset(X_train, label=y_train)
+    val_data = lgb.Dataset(X_val, label=y_val, reference=train_data)
+
+    # Train baseline model
+    baseline_model = lgb.train(
+        baseline_params,
+        train_data,
+        valid_sets=[val_data],
+        num_boost_round=1000,
+        callbacks=[lgb.early_stopping(100), lgb.log_evaluation(0)]
+    )
+
+    # Make predictions
+    baseline_train_pred = baseline_model.predict(X_train)
+    baseline_val_pred = baseline_model.predict(X_val)
+    baseline_test_pred = baseline_model.predict(X_test)
+
+    # Calculate metrics
+    baseline_train_metrics = calculate_metrics(
+        y_train, baseline_train_pred, "LightGBM Baseline Train")
+    baseline_val_metrics = calculate_metrics(
+        y_val, baseline_val_pred, "LightGBM Baseline Val")
+    baseline_test_metrics = calculate_metrics(
+        y_test, baseline_test_pred, "LightGBM Baseline Test")
+
+    logger.info(
+        f"LightGBM Baseline validation RMSE: {baseline_val_metrics['RMSE']:.4f}")
+    logger.info(
+        f"LightGBM Baseline validation R²: {baseline_val_metrics['R2']:.4f}")
+
+    # Define parameter grid for tuning
+    param_grid = {
+        'num_leaves': [31, 50, 100, 200],
+        'learning_rate': [0.01, 0.05, 0.1, 0.2],
+        'feature_fraction': [0.8, 0.9, 0.95, 1.0],
+        'bagging_fraction': [0.8, 0.9, 0.95, 1.0],
+        'bagging_freq': [5, 10, 15],
+        'min_child_samples': [20, 30, 50],
+        'reg_alpha': [0, 0.1, 0.5, 1.0],
+        'reg_lambda': [0, 0.1, 0.5, 1.0]
+    }
+
+    # Use RandomizedSearchCV for efficiency
+    lgb_model = lgb.LGBMRegressor(
+        objective='regression',
+        metric='mae',
+        boosting_type='gbdt',
+        verbose=-1,
+        random_state=42,
+        n_estimators=1000
+    )
+
+    # Randomized search
+    random_search = RandomizedSearchCV(
+        lgb_model,
+        param_grid,
+        n_iter=50,  # Number of parameter settings sampled
+        cv=tscv,
+        scoring='neg_mean_squared_error',
+        random_state=42,
+        n_jobs=-1,
+        verbose=1
+    )
+
+    # Fit the model
+    random_search.fit(X_train, y_train,
+                      eval_set=[(X_val, y_val)],
+                      callbacks=[lgb.early_stopping(100), lgb.log_evaluation(0)])
+
+    # Get best parameters
+    best_params = random_search.best_params_
+
+    # Update parameters with best found
+    final_params = baseline_params.copy()
+    final_params.update(best_params)
+
+    # Train final model
+    final_model = lgb.train(
+        final_params,
+        train_data,
+        valid_sets=[val_data],
+        num_boost_round=1000,
+        callbacks=[lgb.early_stopping(100), lgb.log_evaluation(0)]
+    )
+
+    # Make predictions with final model
+    final_train_pred = final_model.predict(X_train)
+    final_val_pred = final_model.predict(X_val)
+    final_test_pred = final_model.predict(X_test)
+
+    # Calculate final metrics
+    final_train_metrics = calculate_metrics(
+        y_train, final_train_pred, "LightGBM Final Train")
+    final_val_metrics = calculate_metrics(
+        y_val, final_val_pred, "LightGBM Final Val")
+    final_test_metrics = calculate_metrics(
+        y_test, final_test_pred, "LightGBM Final Test")
+
+    logger.info(
+        f"LightGBM Final validation RMSE: {final_val_metrics['RMSE']:.4f}")
+    logger.info(f"LightGBM Final validation R²: {final_val_metrics['R2']:.4f}")
+
+    # 4. Feature Importance Analysis
+    logger.info("  Analyzing LightGBM feature importance...")
+    feature_importance = final_model.feature_importance(importance_type='gain')
+    feature_names = feature_cols
+
+    # Create feature importance dataframe
+    logger.debug(feature_importance)
+    logger.debug(feature_names)
+    importance_df = pd.DataFrame({
+        'feature': feature_names,
+        'importance': feature_importance
+    }).sort_values('importance', ascending=False)
+
+    logger.info(f"    Top 10 most important LightGBM features:")
+    for i, (_, row) in enumerate(importance_df.head(10).iterrows()):
+        logger.info(f"      {i+1}. {row['feature']}: {row['importance']:.4f}")
+
+    # 5. Model Comparison
+    logger.info("  LightGBM model performance comparison:")
+    logger.info(f"    Baseline vs Final Model:")
+    logger.info(
+        f"      Validation RMSE: {baseline_val_metrics['RMSE']:.4f} → {final_val_metrics['RMSE']:.4f}")
+    logger.info(
+        f"      Validation R²: {baseline_val_metrics['R2']:.4f} → {final_val_metrics['R2']:.4f}")
+
+    improvement_rmse = (
+        (baseline_val_metrics['RMSE'] - final_val_metrics['RMSE']) / baseline_val_metrics['RMSE']) * 100
+    improvement_r2 = (
+        (final_val_metrics['R2'] - baseline_val_metrics['R2']) / abs(baseline_val_metrics['R2'])) * 100
+
+    logger.info(f"      RMSE improvement: {improvement_rmse:.2f}%")
+    logger.info(f"      R² improvement: {improvement_r2:.2f}%")
+
+    return {
+        'baseline_model': baseline_model,
+        'final_model': final_model,
+        'best_params': best_params,
+        'baseline_metrics': {
+            'train': baseline_train_metrics,
+            'val': baseline_val_metrics,
+            'test': baseline_test_metrics
+        },
+        'final_metrics': {
+            'train': final_train_metrics,
+            'val': final_val_metrics,
+            'test': final_test_metrics
+        },
+        'feature_importance': importance_df,
+        'predictions': {
+            'baseline': {
+                'train': baseline_train_pred,
+                'val': baseline_val_pred,
+                'test': baseline_test_pred
+            },
+            'final': {
+                'train': final_train_pred,
+                'val': final_val_pred,
+                'test': final_test_pred
+            }
+        },
+    }
+
+
+def train_xgboost_model(X_train, y_train, X_val, y_val, X_test, y_test, feature_cols):
+    """Train XGBoost model with hyperparameter tuning"""
+
+    logger.info("Training XGBoost model...")
+
+    # 1. Baseline XGBoost Model
+    logger.info("  Training baseline XGBoost model...")
+    start_time = time.time()
+
+    baseline_params = {
+        'objective': 'reg:squarederror',
+        'eval_metric': 'mae',
+        'max_depth': 6,
+        'learning_rate': 0.1,
+        'n_estimators': 1000,
+        'subsample': 0.8,
+        'colsample_bytree': 0.8,
+        'random_state': 42,
+        'verbosity': 0
+    }
+
+    # Train baseline model
+    baseline_model = xgb.XGBRegressor(**baseline_params)
+    baseline_model.fit(
+        X_train, y_train,
+        eval_set=[(X_val, y_val)],
+        verbose=False
+    )
+
+    # Make predictions
+    baseline_train_pred = baseline_model.predict(X_train)
+    baseline_val_pred = baseline_model.predict(X_val)
+    baseline_test_pred = baseline_model.predict(X_test)
+
+    # Calculate metrics
+    baseline_train_metrics = calculate_metrics(
+        y_train, baseline_train_pred, "XGBoost Baseline Train")
+    baseline_val_metrics = calculate_metrics(
+        y_val, baseline_val_pred, "XGBoost Baseline Val")
+    baseline_test_metrics = calculate_metrics(
+        y_test, baseline_test_pred, "XGBoost Baseline Test")
+
+    logger.info(
+        f"    XGBoost Baseline validation RMSE: {baseline_val_metrics['RMSE']:.4f}")
+    logger.info(
+        f"    XGBoost Baseline validation R²: {baseline_val_metrics['R2']:.4f}")
+
+    # 2. Hyperparameter Tuning
+    logger.info("  Performing hyperparameter tuning...")
+    start_time = time.time()
+
+    # Define parameter grid for tuning
+    param_grid = {
+        'max_depth': [3, 4, 5, 6, 7, 8],
+        'learning_rate': [0.01, 0.05, 0.1, 0.15, 0.2],
+        'n_estimators': [500, 800, 1000, 1200],
+        'subsample': [0.6, 0.7, 0.8, 0.9, 1.0],
+        'colsample_bytree': [0.6, 0.7, 0.8, 0.9, 1.0],
+        'colsample_bylevel': [0.6, 0.7, 0.8, 0.9, 1.0],
+        'colsample_bynode': [0.6, 0.7, 0.8, 0.9, 1.0],
+        'reg_alpha': [0, 0.1, 0.5, 1.0],
+        'reg_lambda': [0, 0.1, 0.5, 1.0, 2.0],
+        'gamma': [0, 0.1, 0.5, 1.0],
+        'min_child_weight': [1, 3, 5, 7]
+    }
+
+    # Use RandomizedSearchCV for efficiency
+    xgb_model = xgb.XGBRegressor(
+        objective='reg:squarederror',
+        eval_metric='mae',
+        random_state=42,
+        verbosity=0
+    )
+
+    # Randomized search
+    random_search = RandomizedSearchCV(
+        xgb_model,
+        param_grid,
+        n_iter=50,  # Number of parameter settings sampled
+        cv=tscv,
+        scoring='neg_mean_squared_error',
+        random_state=42,
+        n_jobs=-1,
+        verbose=1
+    )
+
+    # Fit the model
+    random_search.fit(X_train, y_train,
+                      eval_set=[(X_val, y_val)],
+                      verbose=False)
+
+    tuning_time = time.time() - start_time
+
+    # Get best parameters
+    best_params = random_search.best_params_
+    logger.info(f"    Best parameters: {best_params}")
+    logger.info(f"    Tuning time: {tuning_time:.2f} seconds")
+
+    # 3. Train Final Model with Best Parameters
+    logger.info("  Training final model with best parameters...")
+    start_time = time.time()
+
+    # Update parameters with best found
+    final_params = baseline_params.copy()
+    final_params.update(best_params)
+
+    # Train final model
+    final_model = xgb.XGBRegressor(**final_params)
+    final_model.fit(
+        X_train, y_train,
+        eval_set=[(X_val, y_val)],
+        verbose=False
+    )
+
+    final_time = time.time() - start_time
+
+    # Make predictions with final model
+    final_train_pred = final_model.predict(X_train)
+    final_val_pred = final_model.predict(X_val)
+    final_test_pred = final_model.predict(X_test)
+
+    # Calculate final metrics
+    final_train_metrics = calculate_metrics(
+        y_train, final_train_pred, "XGBoost Final Train")
+    final_val_metrics = calculate_metrics(
+        y_val, final_val_pred, "XGBoost Final Val")
+    final_test_metrics = calculate_metrics(
+        y_test, final_test_pred, "XGBoost Final Test")
+
+    logger.info(f"    Final XGBoost training time: {final_time:.2f} seconds")
+    logger.info(
+        f"    XGBoost Final validation RMSE: {final_val_metrics['RMSE']:.4f}")
+    logger.info(
+        f"    XGBoost Final validation R²: {final_val_metrics['R2']:.4f}")
+
+    # 4. Feature Importance Analysis
+    logger.info("  Analyzing XGBoost feature importance...")
+    feature_importance = final_model.feature_importances_
+    feature_names = feature_cols
+
+    # Create feature importance dataframe
+    importance_df = pd.DataFrame({
+        'feature': feature_names,
+        'importance': feature_importance
+    }).sort_values('importance', ascending=False)
+
+    logger.info(f"    Top 10 most important XGBoost features:")
+    for i, (_, row) in enumerate(importance_df.head(10).iterrows()):
+        logger.info(f"      {i+1}. {row['feature']}: {row['importance']:.4f}")
+
+    # 5. Model Comparison
+    logger.info("  XGBoost model performance comparison:")
+    logger.info(f"    Baseline vs Final Model:")
+    logger.info(
+        f"      Validation RMSE: {baseline_val_metrics['RMSE']:.4f} → {final_val_metrics['RMSE']:.4f}")
+    logger.info(
+        f"      Validation R²: {baseline_val_metrics['R2']:.4f} → {final_val_metrics['R2']:.4f}")
+
+    improvement_rmse = (
+        (baseline_val_metrics['RMSE'] - final_val_metrics['RMSE']) / baseline_val_metrics['RMSE']) * 100
+    improvement_r2 = (
+        (final_val_metrics['R2'] - baseline_val_metrics['R2']) / abs(baseline_val_metrics['R2'])) * 100
+
+    logger.info(f"      RMSE improvement: {improvement_rmse:.2f}%")
+    logger.info(f"      R² improvement: {improvement_r2:.2f}%")
+
+    # 6. Advanced XGBoost Features
+    logger.info("  Training advanced XGBoost model with additional features...")
+    start_time = time.time()
+
+    # Advanced parameters for better performance
+    advanced_params = final_params.copy()
+    advanced_params.update({
+        'tree_method': 'hist',  # Use histogram-based algorithm
+        'grow_policy': 'lossguide',  # Grow policy for better performance
+        'max_leaves': 0,  # Let max_depth control tree size
+        'max_bin': 256,  # Number of bins for histogram
+        'predictor': 'cpu_predictor',  # Use CPU predictor
+        'enable_categorical': False,  # Disable categorical features
+        'interaction_constraints': None,  # No interaction constraints
+        'monotone_constraints': None,  # No monotone constraints
+    })
+
+    # Train advanced model
+    advanced_model = xgb.XGBRegressor(**advanced_params)
+    advanced_model.fit(
+        X_train, y_train,
+        eval_set=[(X_val, y_val)],
+        verbose=False
+    )
+
+    advanced_time = time.time() - start_time
+
+    # Make predictions with advanced model
+    advanced_train_pred = advanced_model.predict(X_train)
+    advanced_val_pred = advanced_model.predict(X_val)
+    advanced_test_pred = advanced_model.predict(X_test)
+
+    # Calculate advanced metrics
+    advanced_train_metrics = calculate_metrics(
+        y_train, advanced_train_pred, "XGBoost Advanced Train")
+    advanced_val_metrics = calculate_metrics(
+        y_val, advanced_val_pred, "XGBoost Advanced Val")
+    advanced_test_metrics = calculate_metrics(
+        y_test, advanced_test_pred, "XGBoost Advanced Test")
+
+    logger.info(
+        f"    Advanced XGBoost training time: {advanced_time:.2f} seconds")
+    logger.info(
+        f"    Advanced XGBoost validation RMSE: {advanced_val_metrics['RMSE']:.4f}")
+    logger.info(
+        f"    Advanced XGBoost validation R²: {advanced_val_metrics['R2']:.4f}")
+
+    # Compare all XGBoost models
+    logger.info("  All XGBoost models comparison:")
+    logger.info(f"    Baseline RMSE: {baseline_val_metrics['RMSE']:.4f}")
+    logger.info(f"    Final RMSE: {final_val_metrics['RMSE']:.4f}")
+    logger.info(f"    Advanced RMSE: {advanced_val_metrics['RMSE']:.4f}")
+
+    best_model = 'Advanced' if advanced_val_metrics['RMSE'] < final_val_metrics['RMSE'] else 'Final'
+    logger.info(f"    Best XGBoost model: {best_model}")
+
+    return {
+        'baseline_model': baseline_model,
+        'final_model': final_model,
+        'advanced_model': advanced_model,
+        'best_params': best_params,
+        'baseline_metrics': {
+            'train': baseline_train_metrics,
+            'val': baseline_val_metrics,
+            'test': baseline_test_metrics
+        },
+        'final_metrics': {
+            'train': final_train_metrics,
+            'val': final_val_metrics,
+            'test': final_test_metrics
+        },
+        'advanced_metrics': {
+            'train': advanced_train_metrics,
+            'val': advanced_val_metrics,
+            'test': advanced_test_metrics
+        },
+        'feature_importance': importance_df,
+        'predictions': {
+            'baseline': {
+                'train': baseline_train_pred,
+                'val': baseline_val_pred,
+                'test': baseline_test_pred
+            },
+            'final': {
+                'train': final_train_pred,
+                'val': final_val_pred,
+                'test': final_test_pred
+            },
+            'advanced': {
+                'train': advanced_train_pred,
+                'val': advanced_val_pred,
+                'test': advanced_test_pred
+            }
+        },
+    }
+
+
+print(branches)
+# Run all branches and models for multiple lookback configs
+lookback_results = {}
+for lookback in [1, 2, 3]:
+    logger.info(f"Starting pipeline with season_years_back={lookback}")
+    this_fe_branch_dfs = {}
+    for branch_name, branch_df in branch_dfs.items():
+        this_fe_branch_dfs[branch_name] = create_ml_features(
+            branch_df, season_years_back=lookback)
+    # Model results per branch
+    lgb_results = {}
+    xgb_results = {}
+    catboost_results = {}
+    prophet_results = {}
+    keras_lstm_results = {}
+    keras_gru_results = {}
+    keras_rnn_results = {}
+    keras_cnn_lstm_results = {}
+    for branch_name, feature_branch in this_fe_branch_dfs.items():
+        ml_data = prepare_ml_data(feature_branch)
+        lgb_results[branch_name] = train_lightgbm_model(
+            ml_data['X_train'], ml_data['y_train'],
+            ml_data['X_val'], ml_data['y_val'],
+            ml_data['X_test'], ml_data['y_test'],
+            ml_data['feature_cols'])
+        xgb_results[branch_name] = train_xgboost_model(
+            ml_data['X_train'], ml_data['y_train'],
+            ml_data['X_val'], ml_data['y_val'],
+            ml_data['X_test'], ml_data['y_test'],
+            ml_data['feature_cols'])
+        catboost_results[branch_name] = train_catboost_model(
+            ml_data['X_train'], ml_data['y_train'],
+            ml_data['X_val'], ml_data['y_val'],
+            ml_data['X_test'], ml_data['y_test'],
+            ml_data['feature_cols'])
+
+        # Prophet with extra regressors (all advanced features except target & date)
+        reg_cols = [
+            c for c in feature_branch.columns if c not in ['Date', 'Qty']]
+        # Filter for Prophet: only include data from 2020-05-01 onward
+        prophet_df = feature_branch[feature_branch['Date']
+                                    >= pd.to_datetime('2020-05-01')].copy()
+        # Drop any rows with NaN to prevent Prophet errors
+        prophet_df = prophet_df.dropna()
+        prophet_metrics = train_prophet_model(
+            prophet_df, target_col='Qty', regressors=reg_cols, periods=12)
+        prophet_results[branch_name] = prophet_metrics
+        # Keras deep learning models
+        # keras_lstm_results[branch_name] = train_and_evaluate_keras_model(
+        #     feature_branch, reg_cols, 'Qty', build_lstm_model)
+        # keras_gru_results[branch_name] = train_and_evaluate_keras_model(
+        #     feature_branch, reg_cols, 'Qty', build_gru_model)
+        # keras_rnn_results[branch_name] = train_and_evaluate_keras_model(
+        #     feature_branch, reg_cols, 'Qty', build_rnn_model)
+        # keras_cnn_lstm_results[branch_name] = train_and_evaluate_keras_model(
+        #     feature_branch, reg_cols, 'Qty', build_cnn_lstm_model)
+
+    lookback_results[lookback] = {
+        'lgb': lgb_results,
+        'xgb': xgb_results,
+        'catboost': catboost_results,
+        'prophet': prophet_results,
+        # 'lstm': keras_lstm_results,
+        # 'gru': keras_gru_results,
+        # 'rnn': keras_rnn_results,
+        # 'cnn_lstm': keras_cnn_lstm_results
+    }
+    logger.info(f"Results for season_years_back={lookback}")
+    logger.info(f"LightGBM: {lgb_results}")
+    logger.info(f"XGBoost: {xgb_results}")
+    logger.info(f"CatBoost: {catboost_results}")
+    logger.info(f"Prophet: {prophet_results}")
+    logger.info(f"LSTM: {keras_lstm_results}")
+    logger.info(f"GRU: {keras_gru_results}")
+    logger.info(f"RNN: {keras_rnn_results}")
+    logger.info(f"CNN-LSTM: {keras_cnn_lstm_results}")
+    logger.info("-"*100)
 
 
 detailed_monthly_report(lookback_results)
