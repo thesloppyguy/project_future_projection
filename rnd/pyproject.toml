@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "boto3>=1.40.63",
     "catboost>=1.2.8",
     "clearml>=2.0.2",
     "clearml-agent>=2.0.4",
