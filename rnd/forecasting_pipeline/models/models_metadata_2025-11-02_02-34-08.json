@@ -1,0 +1,24 @@
+{
+  "timestamp": "2025-11-02_02-34-08",
+  "models": {
+    "lightgbm": "/Users/sahil/Dev/cdro/rnd/forecasting_pipeline/models/lightgbm_model_2025-11-02_02-34-08.pkl",
+    "xgboost": "/Users/sahil/Dev/cdro/rnd/forecasting_pipeline/models/xgboost_model_2025-11-02_02-34-08.pkl",
+    "catboost": "/Users/sahil/Dev/cdro/rnd/forecasting_pipeline/models/catboost_model_2025-11-02_02-34-08.pkl"
+  },
+  "feature_names": [
+    "Branch_encoded",
+    "day_of_week",
+    "is_peak_season",
+    "lag_1_weeks",
+    "lag_4_weeks",
+    "lag_52_weeks",
+    "month",
+    "quarter",
+    "rolling_max_4_weeks",
+    "rolling_mean_4_weeks",
+    "rolling_std_4_weeks",
+    "week_of_year",
+    "year"
+  ],
+  "num_features": 13
+}

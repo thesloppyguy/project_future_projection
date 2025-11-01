@@ -1,0 +1,47 @@
+{
+  "model_type": "lightgbm",
+  "timestamp": "2025-11-02_01-45-15",
+  "parameters": {
+    "objective": "regression",
+    "metric": "rmse",
+    "boosting_type": "gbdt",
+    "num_leaves": 31,
+    "learning_rate": 0.05,
+    "feature_fraction": 0.9,
+    "bagging_fraction": 0.8,
+    "bagging_freq": 5,
+    "verbose": -1,
+    "random_state": 42
+  },
+  "feature_names": [
+    "Branch_encoded",
+    "Tonnage_encoded",
+    "day_of_week",
+    "is_peak_season",
+    "lag_1_weeks",
+    "lag_4_weeks",
+    "lag_52_weeks",
+    "month",
+    "quarter",
+    "rolling_max_4_weeks",
+    "rolling_mean_4_weeks",
+    "rolling_std_4_weeks",
+    "week_of_year",
+    "year"
+  ],
+  "num_features": 14,
+  "config": {
+    "peak_season_months": [
+      5,
+      6,
+      7,
+      8
+    ],
+    "lag_periods": [
+      1,
+      4,
+      52
+    ],
+    "rolling_window": 4
+  }
+}
