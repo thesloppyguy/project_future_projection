@@ -39,7 +39,7 @@ def prepare_data(df: pd.DataFrame) -> pd.DataFrame:
     # Ensure quantity is non-negative
     logger.info("Ensuring quantities are non-negative")
     df = ensure_quantity_non_negative(df, config.TARGET_COL)
-    
+    df = df[df[config.DATE_COL] >= '2021-09-01']
     # Remove rows with missing critical columns
     initial_rows = len(df)
     df = df.dropna(subset=[config.DATE_COL, config.TARGET_COL] + config.GROUP_BY_COLS[1:])
