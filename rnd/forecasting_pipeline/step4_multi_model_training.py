@@ -249,7 +249,7 @@ def train_lstm(X_train: np.ndarray, y_train: np.ndarray,
     
     # Train
     model.fit(X_train_seq, y_train_seq, 
-             validation_data=(X_val_seq, y_val_scaled),
+             validation_data=(X_val_seq, y_val_seq),
              epochs=50, batch_size=32, verbose=0,
              callbacks=[keras.callbacks.EarlyStopping(patience=10, restore_best_weights=True)])
     
@@ -288,7 +288,7 @@ def train_gru(X_train: np.ndarray, y_train: np.ndarray,
     model.compile(optimizer='adam', loss='mse', metrics=['mae'])
     
     model.fit(X_train_seq, y_train_seq,
-             validation_data=(X_val_seq, y_val_scaled),
+             validation_data=(X_val_seq, y_val_seq),
              epochs=50, batch_size=32, verbose=0,
              callbacks=[keras.callbacks.EarlyStopping(patience=10, restore_best_weights=True)])
     
@@ -326,7 +326,7 @@ def train_simple_rnn(X_train: np.ndarray, y_train: np.ndarray,
     model.compile(optimizer='adam', loss='mse', metrics=['mae'])
     
     model.fit(X_train_seq, y_train_seq,
-             validation_data=(X_val_seq, y_val_scaled),
+             validation_data=(X_val_seq, y_val_seq),
              epochs=50, batch_size=32, verbose=0,
              callbacks=[keras.callbacks.EarlyStopping(patience=10, restore_best_weights=True)])
     
