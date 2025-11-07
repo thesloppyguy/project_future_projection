@@ -1,0 +1,6 @@
+model,branch,aggregation,rmse,mae,mape,nrmse,r2,n_samples,status
+SARIMAX,BLR,monthly,,,,,,0,success
+SARIMAX,COK,monthly,,,,,,0,success
+SARIMAX,MAA,monthly,,,,,,0,success
+SARIMAX,SBD,monthly,,,,,,0,success
+SARIMAX,SBD1,monthly,,,,,,0,success

@@ -1,0 +1,6 @@
+model,branch,aggregation,rmse,mae,mape,nrmse,r2,n_samples,status
+Prophet,BLR,monthly,,,,,,0,success
+Prophet,COK,monthly,,,,,,0,success
+Prophet,MAA,monthly,,,,,,0,success
+Prophet,SBD,monthly,,,,,,0,success
+Prophet,SBD1,monthly,,,,,,0,success

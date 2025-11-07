@@ -1,0 +1,6 @@
+model,branch,aggregation,rmse,mae,mape,nrmse,r2,n_samples,status
+Isolation Forest,BLR,weekly,,,,,,0,success
+Isolation Forest,COK,weekly,,,,,,0,success
+Isolation Forest,MAA,weekly,,,,,,0,success
+Isolation Forest,SBD,weekly,,,,,,0,success
+Isolation Forest,SBD1,weekly,,,,,,0,success

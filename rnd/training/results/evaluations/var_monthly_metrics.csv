@@ -1,0 +1,6 @@
+model,branch,aggregation,rmse,mae,mape,nrmse,r2,n_samples,status
+Vector Autoregression,BLR,monthly,,,,,,0,forecast_failed
+Vector Autoregression,COK,monthly,,,,,,0,forecast_failed
+Vector Autoregression,MAA,monthly,,,,,,0,forecast_failed
+Vector Autoregression,SBD,monthly,,,,,,0,forecast_failed
+Vector Autoregression,SBD1,monthly,,,,,,0,forecast_failed

@@ -16,6 +16,7 @@ dependencies = [
     "meteostat>=1.7.6",
     "nbformat>=5.0.0",
     "neuralprophet>=0.4.2",
+    "holidays<0.30",  # neuralprophet 0.4.2 compatibility
     "nixtla>=0.7.0",
     "numpy>=2.3.4",
     "openpyxl>=3.1.5",

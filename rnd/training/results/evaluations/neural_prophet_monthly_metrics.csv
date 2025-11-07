@@ -1,0 +1,6 @@
+model,branch,aggregation,rmse,mae,mape,nrmse,r2,n_samples,status
+Neural Prophet,BLR,monthly,,,,,,0,training_failed
+Neural Prophet,COK,monthly,,,,,,0,training_failed
+Neural Prophet,MAA,monthly,,,,,,0,training_failed
+Neural Prophet,SBD,monthly,,,,,,0,training_failed
+Neural Prophet,SBD1,monthly,,,,,,0,training_failed

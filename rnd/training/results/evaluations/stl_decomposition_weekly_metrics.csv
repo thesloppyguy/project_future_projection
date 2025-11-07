@@ -1,0 +1,6 @@
+model,branch,aggregation,rmse,mae,mape,nrmse,r2,n_samples,status
+STL Decomposition,BLR,weekly,,,,,,0,training_failed
+STL Decomposition,COK,weekly,,,,,,0,training_failed
+STL Decomposition,MAA,weekly,,,,,,0,training_failed
+STL Decomposition,SBD,weekly,,,,,,0,training_failed
+STL Decomposition,SBD1,weekly,,,,,,0,training_failed

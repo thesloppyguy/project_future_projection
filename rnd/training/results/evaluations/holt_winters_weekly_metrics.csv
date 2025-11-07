@@ -1,0 +1,6 @@
+model,branch,aggregation,rmse,mae,mape,nrmse,r2,n_samples,status
+Holt-Winters,BLR,weekly,,,,,,0,success
+Holt-Winters,COK,weekly,,,,,,0,success
+Holt-Winters,MAA,weekly,,,,,,0,success
+Holt-Winters,SBD,weekly,,,,,,0,success
+Holt-Winters,SBD1,weekly,,,,,,0,success

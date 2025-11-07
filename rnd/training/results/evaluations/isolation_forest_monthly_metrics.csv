@@ -1,0 +1,6 @@
+model,branch,aggregation,rmse,mae,mape,nrmse,r2,n_samples,status
+Isolation Forest,BLR,monthly,,,,,,0,success
+Isolation Forest,COK,monthly,,,,,,0,success
+Isolation Forest,MAA,monthly,,,,,,0,success
+Isolation Forest,SBD,monthly,,,,,,0,success
+Isolation Forest,SBD1,monthly,,,,,,0,success
