@@ -1,0 +1,1108 @@
+{
+    "forecasts": {
+        "from_last_data_point": {
+            "BLR": [
+                {
+                    "date": "2025-04-01",
+                    "quantity": 2829,
+                    "type": "actual",
+                    "upper_limit_1": 6910.1,
+                    "lower_limit_1": 4006.1,
+                    "upper_limit_2": 8362.1,
+                    "lower_limit_2": 2554.1
+                },
+                {
+                    "date": "2025-05-01",
+                    "quantity": 2984,
+                    "type": "actual",
+                    "upper_limit_1": 5996.8,
+                    "lower_limit_1": 3092.8,
+                    "upper_limit_2": 7448.8,
+                    "lower_limit_2": 1640.8
+                },
+                {
+                    "date": "2025-06-01",
+                    "quantity": 1896,
+                    "type": "actual",
+                    "upper_limit_1": 4268.8,
+                    "lower_limit_1": 1364.8,
+                    "upper_limit_2": 5720.8,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-07-01",
+                    "quantity": 1368.7,
+                    "type": "forecast",
+                    "upper_limit_1": 2263.1,
+                    "lower_limit_1": 474.3,
+                    "upper_limit_2": 3157.5,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-08-01",
+                    "quantity": 1908.5,
+                    "type": "forecast",
+                    "upper_limit_1": 2802.9,
+                    "lower_limit_1": 1014.1,
+                    "upper_limit_2": 3697.3,
+                    "lower_limit_2": 119.6
+                },
+                {
+                    "date": "2025-09-01",
+                    "quantity": 2667.9,
+                    "type": "forecast",
+                    "upper_limit_1": 3562.4,
+                    "lower_limit_1": 1773.5,
+                    "upper_limit_2": 4456.8,
+                    "lower_limit_2": 879.1
+                },
+                {
+                    "date": "2025-10-01",
+                    "quantity": 1997.9,
+                    "type": "forecast",
+                    "upper_limit_1": 2892.4,
+                    "lower_limit_1": 1103.5,
+                    "upper_limit_2": 3786.8,
+                    "lower_limit_2": 209.1
+                },
+                {
+                    "date": "2025-11-01",
+                    "quantity": 1875.6,
+                    "type": "forecast",
+                    "upper_limit_1": 2770,
+                    "lower_limit_1": 981.2,
+                    "upper_limit_2": 3664.4,
+                    "lower_limit_2": 86.7
+                },
+                {
+                    "date": "2025-12-01",
+                    "quantity": 3272.7,
+                    "type": "forecast",
+                    "upper_limit_1": 4167.1,
+                    "lower_limit_1": 2378.2,
+                    "upper_limit_2": 5061.5,
+                    "lower_limit_2": 1483.8
+                },
+                {
+                    "date": "2026-01-01",
+                    "quantity": 3290.4,
+                    "type": "forecast",
+                    "upper_limit_1": 4184.8,
+                    "lower_limit_1": 2396,
+                    "upper_limit_2": 5079.3,
+                    "lower_limit_2": 1501.6
+                },
+                {
+                    "date": "2026-02-01",
+                    "quantity": 3572,
+                    "type": "forecast",
+                    "upper_limit_1": 4466.4,
+                    "lower_limit_1": 2677.6,
+                    "upper_limit_2": 5360.8,
+                    "lower_limit_2": 1783.1
+                },
+                {
+                    "date": "2026-03-01",
+                    "quantity": 5603.8,
+                    "type": "forecast",
+                    "upper_limit_1": 6498.2,
+                    "lower_limit_1": 4709.4,
+                    "upper_limit_2": 7392.6,
+                    "lower_limit_2": 3814.9
+                }
+            ],
+            "COK": [
+                {
+                    "date": "2025-04-01",
+                    "quantity": 6014,
+                    "type": "actual",
+                    "upper_limit_1": 12183.6,
+                    "lower_limit_1": 6141.6,
+                    "upper_limit_2": 15204.6,
+                    "lower_limit_2": 3120.6
+                },
+                {
+                    "date": "2025-05-01",
+                    "quantity": 3941,
+                    "type": "actual",
+                    "upper_limit_1": 8007.2,
+                    "lower_limit_1": 1965.2,
+                    "upper_limit_2": 11028.2,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-06-01",
+                    "quantity": 2296,
+                    "type": "actual",
+                    "upper_limit_1": 5021.9,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 8042.9,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-07-01",
+                    "quantity": 2465.8,
+                    "type": "forecast",
+                    "upper_limit_1": 5078.2,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 7690.6,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-08-01",
+                    "quantity": 4585,
+                    "type": "forecast",
+                    "upper_limit_1": 7197.4,
+                    "lower_limit_1": 1972.7,
+                    "upper_limit_2": 9809.8,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-09-01",
+                    "quantity": 3997.1,
+                    "type": "forecast",
+                    "upper_limit_1": 6609.5,
+                    "lower_limit_1": 1384.7,
+                    "upper_limit_2": 9221.9,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-10-01",
+                    "quantity": 1795.5,
+                    "type": "forecast",
+                    "upper_limit_1": 4407.9,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 7020.2,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-11-01",
+                    "quantity": 2289,
+                    "type": "forecast",
+                    "upper_limit_1": 4901.4,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 7513.8,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-12-01",
+                    "quantity": 5315.7,
+                    "type": "forecast",
+                    "upper_limit_1": 7928.1,
+                    "lower_limit_1": 2703.3,
+                    "upper_limit_2": 10540.4,
+                    "lower_limit_2": 90.9
+                },
+                {
+                    "date": "2026-01-01",
+                    "quantity": 2727.2,
+                    "type": "forecast",
+                    "upper_limit_1": 5339.6,
+                    "lower_limit_1": 114.8,
+                    "upper_limit_2": 7952,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2026-02-01",
+                    "quantity": 5041.2,
+                    "type": "forecast",
+                    "upper_limit_1": 7653.6,
+                    "lower_limit_1": 2428.8,
+                    "upper_limit_2": 10266,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2026-03-01",
+                    "quantity": 9082.7,
+                    "type": "forecast",
+                    "upper_limit_1": 11695.1,
+                    "lower_limit_1": 6470.4,
+                    "upper_limit_2": 14307.5,
+                    "lower_limit_2": 3858
+                }
+            ],
+            "MAA": [
+                {
+                    "date": "2025-04-01",
+                    "quantity": 21001,
+                    "type": "actual",
+                    "upper_limit_1": 34143.8,
+                    "lower_limit_1": 20291.8,
+                    "upper_limit_2": 41069.8,
+                    "lower_limit_2": 13365.8
+                },
+                {
+                    "date": "2025-05-01",
+                    "quantity": 10334,
+                    "type": "actual",
+                    "upper_limit_1": 22478.5,
+                    "lower_limit_1": 8626.5,
+                    "upper_limit_2": 29404.5,
+                    "lower_limit_2": 1700.5
+                },
+                {
+                    "date": "2025-06-01",
+                    "quantity": 7101,
+                    "type": "actual",
+                    "upper_limit_1": 13998.1,
+                    "lower_limit_1": 146.1,
+                    "upper_limit_2": 20924.1,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-07-01",
+                    "quantity": 4655.3,
+                    "type": "forecast",
+                    "upper_limit_1": 10288.8,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 15922.2,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-08-01",
+                    "quantity": 6085.7,
+                    "type": "forecast",
+                    "upper_limit_1": 11719.2,
+                    "lower_limit_1": 452.2,
+                    "upper_limit_2": 17352.6,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-09-01",
+                    "quantity": 7682.4,
+                    "type": "forecast",
+                    "upper_limit_1": 13315.8,
+                    "lower_limit_1": 2048.9,
+                    "upper_limit_2": 18949.3,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-10-01",
+                    "quantity": 5772.1,
+                    "type": "forecast",
+                    "upper_limit_1": 11405.6,
+                    "lower_limit_1": 138.7,
+                    "upper_limit_2": 17039.1,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-11-01",
+                    "quantity": 4370.6,
+                    "type": "forecast",
+                    "upper_limit_1": 10004.1,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 15637.5,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-12-01",
+                    "quantity": 18051.8,
+                    "type": "forecast",
+                    "upper_limit_1": 23685.3,
+                    "lower_limit_1": 12418.3,
+                    "upper_limit_2": 29318.7,
+                    "lower_limit_2": 6784.9
+                },
+                {
+                    "date": "2026-01-01",
+                    "quantity": 8205.1,
+                    "type": "forecast",
+                    "upper_limit_1": 13838.6,
+                    "lower_limit_1": 2571.7,
+                    "upper_limit_2": 19472,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2026-02-01",
+                    "quantity": 10344.1,
+                    "type": "forecast",
+                    "upper_limit_1": 15977.6,
+                    "lower_limit_1": 4710.7,
+                    "upper_limit_2": 21611.1,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2026-03-01",
+                    "quantity": 16023,
+                    "type": "forecast",
+                    "upper_limit_1": 21656.5,
+                    "lower_limit_1": 10389.5,
+                    "upper_limit_2": 27289.9,
+                    "lower_limit_2": 4756.1
+                }
+            ],
+            "SBD": [
+                {
+                    "date": "2025-04-01",
+                    "quantity": 7847,
+                    "type": "actual",
+                    "upper_limit_1": 21902.4,
+                    "lower_limit_1": 8148.4,
+                    "upper_limit_2": 28779.4,
+                    "lower_limit_2": 1271.4
+                },
+                {
+                    "date": "2025-05-01",
+                    "quantity": 3876,
+                    "type": "actual",
+                    "upper_limit_1": 15916.9,
+                    "lower_limit_1": 2162.9,
+                    "upper_limit_2": 22793.9,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-06-01",
+                    "quantity": 2999,
+                    "type": "actual",
+                    "upper_limit_1": 11699.9,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 18576.9,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-07-01",
+                    "quantity": 1184.1,
+                    "type": "forecast",
+                    "upper_limit_1": 4789.6,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 8395,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-08-01",
+                    "quantity": 2765.3,
+                    "type": "forecast",
+                    "upper_limit_1": 6370.8,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 9976.3,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-09-01",
+                    "quantity": 3755.8,
+                    "type": "forecast",
+                    "upper_limit_1": 7361.3,
+                    "lower_limit_1": 150.4,
+                    "upper_limit_2": 10966.8,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-10-01",
+                    "quantity": 3824.2,
+                    "type": "forecast",
+                    "upper_limit_1": 7429.7,
+                    "lower_limit_1": 218.7,
+                    "upper_limit_2": 11035.1,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-11-01",
+                    "quantity": 2507.4,
+                    "type": "forecast",
+                    "upper_limit_1": 6112.8,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 9718.3,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-12-01",
+                    "quantity": 12117.1,
+                    "type": "forecast",
+                    "upper_limit_1": 15722.6,
+                    "lower_limit_1": 8511.6,
+                    "upper_limit_2": 19328.1,
+                    "lower_limit_2": 4906.2
+                },
+                {
+                    "date": "2026-01-01",
+                    "quantity": 4867.6,
+                    "type": "forecast",
+                    "upper_limit_1": 8473,
+                    "lower_limit_1": 1262.1,
+                    "upper_limit_2": 12078.5,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2026-02-01",
+                    "quantity": 8449.8,
+                    "type": "forecast",
+                    "upper_limit_1": 12055.3,
+                    "lower_limit_1": 4844.3,
+                    "upper_limit_2": 15660.8,
+                    "lower_limit_2": 1238.9
+                },
+                {
+                    "date": "2026-03-01",
+                    "quantity": 12744.4,
+                    "type": "forecast",
+                    "upper_limit_1": 16349.8,
+                    "lower_limit_1": 9138.9,
+                    "upper_limit_2": 19955.3,
+                    "lower_limit_2": 5533.4
+                }
+            ],
+            "SBD1": [
+                {
+                    "date": "2025-04-01",
+                    "quantity": 6943,
+                    "type": "actual",
+                    "upper_limit_1": 22050.7,
+                    "lower_limit_1": 11460.7,
+                    "upper_limit_2": 27345.7,
+                    "lower_limit_2": 6165.7
+                },
+                {
+                    "date": "2025-05-01",
+                    "quantity": 4509,
+                    "type": "actual",
+                    "upper_limit_1": 14948.3,
+                    "lower_limit_1": 4358.3,
+                    "upper_limit_2": 20243.3,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-06-01",
+                    "quantity": 4102,
+                    "type": "actual",
+                    "upper_limit_1": 11160.8,
+                    "lower_limit_1": 570.8,
+                    "upper_limit_2": 16455.8,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-07-01",
+                    "quantity": 761.6,
+                    "type": "forecast",
+                    "upper_limit_1": 3551.6,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 6341.7,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-08-01",
+                    "quantity": 1923.7,
+                    "type": "forecast",
+                    "upper_limit_1": 4713.7,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 7503.8,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-09-01",
+                    "quantity": 2445.8,
+                    "type": "forecast",
+                    "upper_limit_1": 5235.9,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 8025.9,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-10-01",
+                    "quantity": 3926.4,
+                    "type": "forecast",
+                    "upper_limit_1": 6716.5,
+                    "lower_limit_1": 1136.4,
+                    "upper_limit_2": 9506.5,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-11-01",
+                    "quantity": 1451.8,
+                    "type": "forecast",
+                    "upper_limit_1": 4241.8,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 7031.9,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-12-01",
+                    "quantity": 5321.4,
+                    "type": "forecast",
+                    "upper_limit_1": 8111.4,
+                    "lower_limit_1": 2531.3,
+                    "upper_limit_2": 10901.5,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2026-01-01",
+                    "quantity": 2286.6,
+                    "type": "forecast",
+                    "upper_limit_1": 5076.6,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 7866.7,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2026-02-01",
+                    "quantity": 5741.2,
+                    "type": "forecast",
+                    "upper_limit_1": 8531.2,
+                    "lower_limit_1": 2951.1,
+                    "upper_limit_2": 11321.3,
+                    "lower_limit_2": 161.1
+                },
+                {
+                    "date": "2026-03-01",
+                    "quantity": 9232.2,
+                    "type": "forecast",
+                    "upper_limit_1": 12022.2,
+                    "lower_limit_1": 6442.1,
+                    "upper_limit_2": 14812.3,
+                    "lower_limit_2": 3652
+                }
+            ]
+        },
+        "from_fy_start": {
+            "BLR": [
+                {
+                    "date": "2025-04-01",
+                    "quantity": 5458.1,
+                    "type": "forecast",
+                    "upper_limit_1": 6910.1,
+                    "lower_limit_1": 4006.1,
+                    "upper_limit_2": 8362.1,
+                    "lower_limit_2": 2554.1
+                },
+                {
+                    "date": "2025-05-01",
+                    "quantity": 4544.8,
+                    "type": "forecast",
+                    "upper_limit_1": 5996.8,
+                    "lower_limit_1": 3092.8,
+                    "upper_limit_2": 7448.8,
+                    "lower_limit_2": 1640.8
+                },
+                {
+                    "date": "2025-06-01",
+                    "quantity": 2816.8,
+                    "type": "forecast",
+                    "upper_limit_1": 4268.8,
+                    "lower_limit_1": 1364.8,
+                    "upper_limit_2": 5720.8,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-07-01",
+                    "quantity": 2221.9,
+                    "type": "forecast",
+                    "upper_limit_1": 3673.9,
+                    "lower_limit_1": 769.9,
+                    "upper_limit_2": 5125.9,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-08-01",
+                    "quantity": 3098.2,
+                    "type": "forecast",
+                    "upper_limit_1": 4550.2,
+                    "lower_limit_1": 1646.2,
+                    "upper_limit_2": 6002.2,
+                    "lower_limit_2": 194.2
+                },
+                {
+                    "date": "2025-09-01",
+                    "quantity": 4331.1,
+                    "type": "forecast",
+                    "upper_limit_1": 5783.1,
+                    "lower_limit_1": 2879.1,
+                    "upper_limit_2": 7235.1,
+                    "lower_limit_2": 1427.1
+                },
+                {
+                    "date": "2025-10-01",
+                    "quantity": 3243.4,
+                    "type": "forecast",
+                    "upper_limit_1": 4695.4,
+                    "lower_limit_1": 1791.4,
+                    "upper_limit_2": 6147.4,
+                    "lower_limit_2": 339.4
+                },
+                {
+                    "date": "2025-11-01",
+                    "quantity": 3044.8,
+                    "type": "forecast",
+                    "upper_limit_1": 4496.8,
+                    "lower_limit_1": 1592.8,
+                    "upper_limit_2": 5948.8,
+                    "lower_limit_2": 140.8
+                },
+                {
+                    "date": "2025-12-01",
+                    "quantity": 5312.8,
+                    "type": "forecast",
+                    "upper_limit_1": 6764.8,
+                    "lower_limit_1": 3860.8,
+                    "upper_limit_2": 8216.8,
+                    "lower_limit_2": 2408.8
+                },
+                {
+                    "date": "2026-01-01",
+                    "quantity": 5341.6,
+                    "type": "forecast",
+                    "upper_limit_1": 6793.6,
+                    "lower_limit_1": 3889.6,
+                    "upper_limit_2": 8245.6,
+                    "lower_limit_2": 2437.6
+                },
+                {
+                    "date": "2026-02-01",
+                    "quantity": 5798.7,
+                    "type": "forecast",
+                    "upper_limit_1": 7250.7,
+                    "lower_limit_1": 4346.7,
+                    "upper_limit_2": 8702.7,
+                    "lower_limit_2": 2894.7
+                },
+                {
+                    "date": "2026-03-01",
+                    "quantity": 9097.1,
+                    "type": "forecast",
+                    "upper_limit_1": 10549.1,
+                    "lower_limit_1": 7645.1,
+                    "upper_limit_2": 12001.1,
+                    "lower_limit_2": 6193.1
+                }
+            ],
+            "COK": [
+                {
+                    "date": "2025-04-01",
+                    "quantity": 9162.6,
+                    "type": "forecast",
+                    "upper_limit_1": 12183.6,
+                    "lower_limit_1": 6141.6,
+                    "upper_limit_2": 15204.6,
+                    "lower_limit_2": 3120.6
+                },
+                {
+                    "date": "2025-05-01",
+                    "quantity": 4986.2,
+                    "type": "forecast",
+                    "upper_limit_1": 8007.2,
+                    "lower_limit_1": 1965.2,
+                    "upper_limit_2": 11028.2,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-06-01",
+                    "quantity": 2000.9,
+                    "type": "forecast",
+                    "upper_limit_1": 5021.9,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 8042.9,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-07-01",
+                    "quantity": 2851.5,
+                    "type": "forecast",
+                    "upper_limit_1": 5872.5,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 8893.5,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-08-01",
+                    "quantity": 5302.2,
+                    "type": "forecast",
+                    "upper_limit_1": 8323.2,
+                    "lower_limit_1": 2281.2,
+                    "upper_limit_2": 11344.2,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-09-01",
+                    "quantity": 4622.3,
+                    "type": "forecast",
+                    "upper_limit_1": 7643.3,
+                    "lower_limit_1": 1601.3,
+                    "upper_limit_2": 10664.3,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-10-01",
+                    "quantity": 2076.3,
+                    "type": "forecast",
+                    "upper_limit_1": 5097.3,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 8118.3,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-11-01",
+                    "quantity": 2647,
+                    "type": "forecast",
+                    "upper_limit_1": 5668,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 8689,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-12-01",
+                    "quantity": 6147.1,
+                    "type": "forecast",
+                    "upper_limit_1": 9168.1,
+                    "lower_limit_1": 3126.1,
+                    "upper_limit_2": 12189.1,
+                    "lower_limit_2": 105.1
+                },
+                {
+                    "date": "2026-01-01",
+                    "quantity": 3153.8,
+                    "type": "forecast",
+                    "upper_limit_1": 6174.8,
+                    "lower_limit_1": 132.8,
+                    "upper_limit_2": 9195.8,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2026-02-01",
+                    "quantity": 5829.7,
+                    "type": "forecast",
+                    "upper_limit_1": 8850.7,
+                    "lower_limit_1": 2808.7,
+                    "upper_limit_2": 11871.7,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2026-03-01",
+                    "quantity": 10503.4,
+                    "type": "forecast",
+                    "upper_limit_1": 13524.4,
+                    "lower_limit_1": 7482.4,
+                    "upper_limit_2": 16545.4,
+                    "lower_limit_2": 4461.4
+                }
+            ],
+            "MAA": [
+                {
+                    "date": "2025-04-01",
+                    "quantity": 27217.8,
+                    "type": "forecast",
+                    "upper_limit_1": 34143.8,
+                    "lower_limit_1": 20291.8,
+                    "upper_limit_2": 41069.8,
+                    "lower_limit_2": 13365.8
+                },
+                {
+                    "date": "2025-05-01",
+                    "quantity": 15552.5,
+                    "type": "forecast",
+                    "upper_limit_1": 22478.5,
+                    "lower_limit_1": 8626.5,
+                    "upper_limit_2": 29404.5,
+                    "lower_limit_2": 1700.5
+                },
+                {
+                    "date": "2025-06-01",
+                    "quantity": 7072.1,
+                    "type": "forecast",
+                    "upper_limit_1": 13998.1,
+                    "lower_limit_1": 146.1,
+                    "upper_limit_2": 20924.1,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-07-01",
+                    "quantity": 5723.4,
+                    "type": "forecast",
+                    "upper_limit_1": 12649.4,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 19575.4,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-08-01",
+                    "quantity": 7482,
+                    "type": "forecast",
+                    "upper_limit_1": 14408,
+                    "lower_limit_1": 556,
+                    "upper_limit_2": 21334,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-09-01",
+                    "quantity": 9445,
+                    "type": "forecast",
+                    "upper_limit_1": 16371,
+                    "lower_limit_1": 2519,
+                    "upper_limit_2": 23297,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-10-01",
+                    "quantity": 7096.5,
+                    "type": "forecast",
+                    "upper_limit_1": 14022.5,
+                    "lower_limit_1": 170.5,
+                    "upper_limit_2": 20948.5,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-11-01",
+                    "quantity": 5373.4,
+                    "type": "forecast",
+                    "upper_limit_1": 12299.4,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 19225.4,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-12-01",
+                    "quantity": 22193.6,
+                    "type": "forecast",
+                    "upper_limit_1": 29119.6,
+                    "lower_limit_1": 15267.6,
+                    "upper_limit_2": 36045.6,
+                    "lower_limit_2": 8341.6
+                },
+                {
+                    "date": "2026-01-01",
+                    "quantity": 10087.7,
+                    "type": "forecast",
+                    "upper_limit_1": 17013.7,
+                    "lower_limit_1": 3161.7,
+                    "upper_limit_2": 23939.7,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2026-02-01",
+                    "quantity": 12717.5,
+                    "type": "forecast",
+                    "upper_limit_1": 19643.5,
+                    "lower_limit_1": 5791.5,
+                    "upper_limit_2": 26569.5,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2026-03-01",
+                    "quantity": 19699.3,
+                    "type": "forecast",
+                    "upper_limit_1": 26625.3,
+                    "lower_limit_1": 12773.3,
+                    "upper_limit_2": 33551.3,
+                    "lower_limit_2": 5847.3
+                }
+            ],
+            "SBD": [
+                {
+                    "date": "2025-04-01",
+                    "quantity": 15025.4,
+                    "type": "forecast",
+                    "upper_limit_1": 21902.4,
+                    "lower_limit_1": 8148.4,
+                    "upper_limit_2": 28779.4,
+                    "lower_limit_2": 1271.4
+                },
+                {
+                    "date": "2025-05-01",
+                    "quantity": 9039.9,
+                    "type": "forecast",
+                    "upper_limit_1": 15916.9,
+                    "lower_limit_1": 2162.9,
+                    "upper_limit_2": 22793.9,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-06-01",
+                    "quantity": 4822.9,
+                    "type": "forecast",
+                    "upper_limit_1": 11699.9,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 18576.9,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-07-01",
+                    "quantity": 2258.5,
+                    "type": "forecast",
+                    "upper_limit_1": 9135.5,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 16012.5,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-08-01",
+                    "quantity": 5274.5,
+                    "type": "forecast",
+                    "upper_limit_1": 12151.5,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 19028.5,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-09-01",
+                    "quantity": 7163.8,
+                    "type": "forecast",
+                    "upper_limit_1": 14040.8,
+                    "lower_limit_1": 286.8,
+                    "upper_limit_2": 20917.8,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-10-01",
+                    "quantity": 7294.2,
+                    "type": "forecast",
+                    "upper_limit_1": 14171.2,
+                    "lower_limit_1": 417.2,
+                    "upper_limit_2": 21048.2,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-11-01",
+                    "quantity": 4782.5,
+                    "type": "forecast",
+                    "upper_limit_1": 11659.5,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 18536.5,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-12-01",
+                    "quantity": 23111.9,
+                    "type": "forecast",
+                    "upper_limit_1": 29988.9,
+                    "lower_limit_1": 16234.9,
+                    "upper_limit_2": 36865.9,
+                    "lower_limit_2": 9357.9
+                },
+                {
+                    "date": "2026-01-01",
+                    "quantity": 9284.3,
+                    "type": "forecast",
+                    "upper_limit_1": 16161.3,
+                    "lower_limit_1": 2407.3,
+                    "upper_limit_2": 23038.3,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2026-02-01",
+                    "quantity": 16117,
+                    "type": "forecast",
+                    "upper_limit_1": 22994,
+                    "lower_limit_1": 9240,
+                    "upper_limit_2": 29871,
+                    "lower_limit_2": 2363
+                },
+                {
+                    "date": "2026-03-01",
+                    "quantity": 24308.3,
+                    "type": "forecast",
+                    "upper_limit_1": 31185.3,
+                    "lower_limit_1": 17431.3,
+                    "upper_limit_2": 38062.3,
+                    "lower_limit_2": 10554.3
+                }
+            ],
+            "SBD1": [
+                {
+                    "date": "2025-04-01",
+                    "quantity": 16755.7,
+                    "type": "forecast",
+                    "upper_limit_1": 22050.7,
+                    "lower_limit_1": 11460.7,
+                    "upper_limit_2": 27345.7,
+                    "lower_limit_2": 6165.7
+                },
+                {
+                    "date": "2025-05-01",
+                    "quantity": 9653.3,
+                    "type": "forecast",
+                    "upper_limit_1": 14948.3,
+                    "lower_limit_1": 4358.3,
+                    "upper_limit_2": 20243.3,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-06-01",
+                    "quantity": 5865.8,
+                    "type": "forecast",
+                    "upper_limit_1": 11160.8,
+                    "lower_limit_1": 570.8,
+                    "upper_limit_2": 16455.8,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-07-01",
+                    "quantity": 1445.3,
+                    "type": "forecast",
+                    "upper_limit_1": 6740.3,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 12035.3,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-08-01",
+                    "quantity": 3650.8,
+                    "type": "forecast",
+                    "upper_limit_1": 8945.8,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 14240.8,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-09-01",
+                    "quantity": 4641.7,
+                    "type": "forecast",
+                    "upper_limit_1": 9936.7,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 15231.7,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-10-01",
+                    "quantity": 7451.6,
+                    "type": "forecast",
+                    "upper_limit_1": 12746.6,
+                    "lower_limit_1": 2156.6,
+                    "upper_limit_2": 18041.6,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-11-01",
+                    "quantity": 2755.2,
+                    "type": "forecast",
+                    "upper_limit_1": 8050.2,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 13345.2,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2025-12-01",
+                    "quantity": 10099,
+                    "type": "forecast",
+                    "upper_limit_1": 15394,
+                    "lower_limit_1": 4804,
+                    "upper_limit_2": 20689,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2026-01-01",
+                    "quantity": 4339.5,
+                    "type": "forecast",
+                    "upper_limit_1": 9634.5,
+                    "lower_limit_1": 0,
+                    "upper_limit_2": 14929.5,
+                    "lower_limit_2": 0
+                },
+                {
+                    "date": "2026-02-01",
+                    "quantity": 10895.7,
+                    "type": "forecast",
+                    "upper_limit_1": 16190.7,
+                    "lower_limit_1": 5600.7,
+                    "upper_limit_2": 21485.7,
+                    "lower_limit_2": 305.7
+                },
+                {
+                    "date": "2026-03-01",
+                    "quantity": 17520.9,
+                    "type": "forecast",
+                    "upper_limit_1": 22815.9,
+                    "lower_limit_1": 12225.9,
+                    "upper_limit_2": 28110.9,
+                    "lower_limit_2": 6930.9
+                }
+            ]
+        }
+    }
+}
