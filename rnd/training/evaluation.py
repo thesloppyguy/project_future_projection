@@ -5,7 +5,7 @@ Calculates RMSE, MAE, MAPE, NRMSE, and R2 score metrics.
 
 import pandas as pd
 import numpy as np
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Optional
 from pathlib import Path
 import sys
 import os
@@ -65,7 +65,9 @@ def evaluate_forecast(
     y_pred: pd.Series,
     model_name: str,
     branch: str,
-    aggregation: str
+    aggregation: str,
+    anomaly_labels: Optional[pd.Series] = None,
+    anomaly_severity: Optional[pd.Series] = None
 ) -> Dict[str, float]:
     """
     Evaluate forecast predictions against actual values.
@@ -131,7 +133,7 @@ def evaluate_forecast(
     # Use NRMSE normalized by mean
     nrmse = metrics.get('nrmse_mean', np.nan)
     
-    return {
+    result = {
         'model': model_name,
         'branch': branch,
         'aggregation': aggregation,
@@ -142,6 +144,28 @@ def evaluate_forecast(
         'r2': metrics.get('r2', np.nan),
         'n_samples': len(y_true_valid)
     }
+    
+    # Add anomaly statistics if available
+    if anomaly_labels is not None and len(anomaly_labels) > 0:
+        # Align anomaly data with evaluation period
+        anomaly_aligned = anomaly_labels.reindex(common_index, fill_value=0)
+        anomaly_rate = anomaly_aligned.mean() if len(anomaly_aligned) > 0 else 0.0
+        result['anomaly_rate'] = anomaly_rate
+        
+        if anomaly_severity is not None and len(anomaly_severity) > 0:
+            severity_aligned = anomaly_severity.reindex(common_index, fill_value=0.0)
+            anomaly_severities = severity_aligned[anomaly_aligned == 1]
+            result['mean_anomaly_severity'] = anomaly_severities.mean() if len(anomaly_severities) > 0 else 0.0
+            result['max_anomaly_severity'] = anomaly_severities.max() if len(anomaly_severities) > 0 else 0.0
+        else:
+            result['mean_anomaly_severity'] = np.nan
+            result['max_anomaly_severity'] = np.nan
+    else:
+        result['anomaly_rate'] = np.nan
+        result['mean_anomaly_severity'] = np.nan
+        result['max_anomaly_severity'] = np.nan
+    
+    return result
 
 
 def aggregate_forecast_to_match(
@@ -220,6 +244,82 @@ def generate_summary_report(
     Path(output_path).parent.mkdir(parents=True, exist_ok=True)
     summary.to_csv(output_path, index=False)
     print(f"Saved summary report to {output_path}")
+    
+    return summary
+
+
+def save_anomaly_detection_results(
+    anomaly_labels: pd.Series,
+    anomaly_severity: pd.Series,
+    series: pd.Series,
+    output_path: str,
+    branch: str,
+    aggregation: str
+) -> None:
+    """
+    Save anomaly detection results to CSV.
+    
+    Args:
+        anomaly_labels: Anomaly labels (0=normal, 1=anomaly)
+        anomaly_severity: Anomaly severity scores (0-1)
+        series: Original time series
+        output_path: Path to save CSV file
+        branch: Branch name
+        aggregation: 'weekly' or 'monthly'
+    """
+    # Align all series to common index
+    common_index = series.index.intersection(anomaly_labels.index).intersection(anomaly_severity.index)
+    
+    df = pd.DataFrame({
+        'Date': common_index,
+        'Value': series.reindex(common_index).values,
+        'Anomaly_Label': anomaly_labels.reindex(common_index, fill_value=0).values,
+        'Anomaly_Severity': anomaly_severity.reindex(common_index, fill_value=0.0).values,
+        'Branch': branch,
+        'Aggregation': aggregation
+    })
+    
+    # Create directory if it doesn't exist
+    Path(output_path).parent.mkdir(parents=True, exist_ok=True)
+    
+    df.to_csv(output_path, index=False)
+    print(f"Saved anomaly detection results to {output_path}")
+
+
+def generate_anomaly_summary_report(
+    all_anomaly_results: List[Dict],
+    output_path: str
+) -> pd.DataFrame:
+    """
+    Generate summary report of anomaly detection across all branches and models.
+    
+    Args:
+        all_anomaly_results: List of dictionaries with anomaly statistics
+        output_path: Path to save summary CSV
+        
+    Returns:
+        Summary dataframe
+    """
+    df = pd.DataFrame(all_anomaly_results)
+    
+    if len(df) == 0:
+        print("Warning: No anomaly results to summarize")
+        return pd.DataFrame()
+    
+    # Create summary by branch and aggregation
+    summary = df.groupby(['branch', 'aggregation']).agg({
+        'anomaly_rate': ['mean', 'std', 'min', 'max'],
+        'mean_anomaly_severity': ['mean', 'std'],
+        'max_anomaly_severity': ['mean', 'max']
+    }).reset_index()
+    
+    # Flatten column names
+    summary.columns = ['_'.join(col).strip('_') if col[1] else col[0] for col in summary.columns]
+    
+    # Save summary
+    Path(output_path).parent.mkdir(parents=True, exist_ok=True)
+    summary.to_csv(output_path, index=False)
+    print(f"Saved anomaly summary report to {output_path}")
     
     return summary
 

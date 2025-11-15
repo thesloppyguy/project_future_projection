@@ -1,0 +1,13 @@
+pandas>=1.5.0
+numpy>=1.23.0
+lightgbm>=3.3.0
+xgboost>=1.7.0
+catboost>=1.1.0
+prophet>=1.1.0
+scikit-learn>=1.1.0
+pmdarima>=2.0.0  # For Auto-ARIMA
+statsmodels>=0.13.0  # For Holt-Winters, STL, SARIMAX
+matplotlib>=3.5.0  # For visualization
+seaborn>=0.12.0  # For visualization
+optuna>=3.0.0  # For hyperparameter tuning (optional)
+

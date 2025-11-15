@@ -11,8 +11,16 @@ from pathlib import Path
 from statsmodels.tsa.statespace.structural import UnobservedComponents
 
 
-def train_model(train_data: pd.Series, branch: str, freq: str = 'W-MON',
-                use_optimization: bool = True, n_trials: int = 20) -> Optional[object]:
+def train_model(
+    train_data: pd.Series,
+    branch: str,
+    freq: str = 'W-MON',
+    use_optimization: bool = True,
+    n_trials: int = 20,
+    anomaly_labels: Optional[pd.Series] = None,
+    anomaly_severity: Optional[pd.Series] = None,
+    yoy_growth: Optional[pd.Series] = None
+) -> Optional[object]:
     """
     Train Kalman Filter model (using UnobservedComponents from statsmodels).
     

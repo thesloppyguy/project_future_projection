@@ -1,0 +1,6 @@
+model,branch,aggregation,rmse,mae,mape,nrmse,r2,n_samples,status
+Kalman Filter,BLR,weekly,,,,,,0,forecast_failed
+Kalman Filter,COK,weekly,,,,,,0,forecast_failed
+Kalman Filter,MAA,weekly,,,,,,0,forecast_failed
+Kalman Filter,SBD,weekly,,,,,,0,forecast_failed
+Kalman Filter,SBD1,weekly,,,,,,0,forecast_failed

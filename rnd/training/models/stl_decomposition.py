@@ -11,8 +11,16 @@ from statsmodels.tsa.seasonal import STL
 from statsmodels.tsa.arima.model import ARIMA
 
 
-def train_model(train_data: pd.Series, branch: str, freq: str = 'W-MON',
-                use_optimization: bool = True, n_trials: int = 20) -> Optional[dict]:
+def train_model(
+    train_data: pd.Series,
+    branch: str,
+    freq: str = 'W-MON',
+    use_optimization: bool = True,
+    n_trials: int = 20,
+    anomaly_labels: Optional[pd.Series] = None,
+    anomaly_severity: Optional[pd.Series] = None,
+    yoy_growth: Optional[pd.Series] = None
+) -> Optional[dict]:
     """
     Train STL Decomposition model.
     

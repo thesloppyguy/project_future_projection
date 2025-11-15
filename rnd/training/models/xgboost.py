@@ -16,13 +16,24 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 from training.hyperparameter_optimization import get_hyperparameters
 
 
-def create_features(series: pd.Series, n_lags: int = 12) -> pd.DataFrame:
+def create_features(
+    series: pd.Series,
+    n_lags: int = 12,
+    anomaly_labels: Optional[pd.Series] = None,
+    anomaly_severity: Optional[pd.Series] = None,
+    yoy_growth: Optional[pd.Series] = None,
+    freq: str = 'W-MON'
+) -> pd.DataFrame:
     """
-    Create features from time series.
+    Create features from time series including YoY growth and anomaly features.
     
     Args:
         series: Time series data
         n_lags: Number of lag features to create
+        anomaly_labels: Anomaly labels (0=normal, 1=anomaly)
+        anomaly_severity: Anomaly severity scores (0-1)
+        yoy_growth: Year-over-year growth rates
+        freq: Frequency string
         
     Returns:
         DataFrame with features
@@ -45,14 +56,67 @@ def create_features(series: pd.Series, n_lags: int = 12) -> pd.DataFrame:
     df['year'] = df['date'].dt.year
     df['quarter'] = df['date'].dt.quarter
     
+    # YoY growth features
+    if yoy_growth is not None and len(yoy_growth) > 0:
+        # Align yoy_growth with df
+        yoy_aligned = yoy_growth.reindex(df['date'], fill_value=0)
+        df['yoy_growth_rate'] = yoy_aligned.values
+        
+        # Lagged YoY growth features
+        for lag in range(1, min(13, len(df))):
+            df[f'yoy_growth_lag_{lag}'] = df['yoy_growth_rate'].shift(lag)
+        
+        # Rolling YoY averages
+        for window in [4, 8, 12]:
+            df[f'rolling_yoy_mean_{window}'] = df['yoy_growth_rate'].shift(1).rolling(
+                window=window, min_periods=1
+            ).mean()
+    else:
+        # Calculate YoY growth if not provided
+        periods = 52 if freq == 'W-MON' else 12
+        series_shifted = series.shift(periods)
+        yoy_calc = ((series - series_shifted) / series_shifted) * 100
+        yoy_calc = yoy_calc.replace([np.inf, -np.inf], np.nan).fillna(0)
+        yoy_aligned = yoy_calc.reindex(df['date'], fill_value=0)
+        df['yoy_growth_rate'] = yoy_aligned.values
+        
+        for lag in range(1, min(13, len(df))):
+            df[f'yoy_growth_lag_{lag}'] = df['yoy_growth_rate'].shift(lag)
+        
+        for window in [4, 8, 12]:
+            df[f'rolling_yoy_mean_{window}'] = df['yoy_growth_rate'].shift(1).rolling(
+                window=window, min_periods=1
+            ).mean()
+    
+    # Anomaly features
+    if anomaly_labels is not None and len(anomaly_labels) > 0:
+        labels_aligned = anomaly_labels.reindex(df['date'], fill_value=0)
+        df['anomaly_label'] = labels_aligned.values.astype(int)
+    else:
+        df['anomaly_label'] = 0
+    
+    if anomaly_severity is not None and len(anomaly_severity) > 0:
+        severity_aligned = anomaly_severity.reindex(df['date'], fill_value=0.0)
+        df['anomaly_severity'] = severity_aligned.values
+    else:
+        df['anomaly_severity'] = 0.0
+    
     # Fill NaN values
     df = df.fillna(0)
     
     return df
 
 
-def train_model(train_data: pd.Series, branch: str, freq: str = 'W-MON',
-                use_optimization: bool = True, n_trials: int = 20) -> Optional[dict]:
+def train_model(
+    train_data: pd.Series,
+    branch: str,
+    freq: str = 'W-MON',
+    use_optimization: bool = True,
+    n_trials: int = 20,
+    anomaly_labels: Optional[pd.Series] = None,
+    anomaly_severity: Optional[pd.Series] = None,
+    yoy_growth: Optional[pd.Series] = None
+) -> Optional[dict]:
     """
     Train XGBoost model.
     
@@ -70,7 +134,13 @@ def train_model(train_data: pd.Series, branch: str, freq: str = 'W-MON',
     
     try:
         # Create features
-        feature_df = create_features(train_data)
+        feature_df = create_features(
+            train_data,
+            anomaly_labels=anomaly_labels,
+            anomaly_severity=anomaly_severity,
+            yoy_growth=yoy_growth,
+            freq=freq
+        )
         
         # Prepare training data
         feature_cols = [col for col in feature_df.columns if col not in ['y', 'date']]

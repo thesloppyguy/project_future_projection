@@ -45,8 +45,16 @@ def create_sequences(data: np.ndarray, n_steps: int = 12) -> tuple:
     return np.array(X), np.array(y)
 
 
-def train_model(train_data: pd.Series, branch: str, freq: str = 'W-MON',
-                use_optimization: bool = True, n_trials: int = 10) -> Optional[dict]:
+def train_model(
+    train_data: pd.Series,
+    branch: str,
+    freq: str = 'W-MON',
+    use_optimization: bool = True,
+    n_trials: int = 10,
+    anomaly_labels: Optional[pd.Series] = None,
+    anomaly_severity: Optional[pd.Series] = None,
+    yoy_growth: Optional[pd.Series] = None
+) -> Optional[dict]:
     """
     Train Bayesian Deep Learning model (Bayesian LSTM).
     

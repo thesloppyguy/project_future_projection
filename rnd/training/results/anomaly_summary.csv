@@ -1,0 +1,11 @@
+branch,aggregation,anomaly_rate_mean,anomaly_rate_std,anomaly_rate_min,anomaly_rate_max,mean_anomaly_severity_mean,mean_anomaly_severity_std,max_anomaly_severity_mean,max_anomaly_severity_max
+BLR,monthly,1.0,,1.0,1.0,0.09805809518022571,,0.4,0.4
+BLR,weekly,1.0,,1.0,1.0,0.09297436825654906,,0.4,0.4
+COK,monthly,1.0,,1.0,1.0,0.08372701198478034,,0.4,0.4
+COK,weekly,1.0,,1.0,1.0,0.6828607009541806,,1.0,1.0
+MAA,monthly,1.0,,1.0,1.0,0.10322156820274664,,0.3888533252111068,0.3888533252111068
+MAA,weekly,1.0,,1.0,1.0,0.0863405339732152,,0.4,0.4
+SBD,monthly,1.0,,1.0,1.0,0.09833571653093791,,0.4,0.4
+SBD,weekly,1.0,,1.0,1.0,0.07984444143917069,,0.4,0.4
+SBD1,monthly,1.0,,1.0,1.0,0.09301729369374634,,0.4,0.4
+SBD1,weekly,1.0,,1.0,1.0,0.09600409755532338,,0.4,0.4

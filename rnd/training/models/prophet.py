@@ -25,15 +25,26 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 from training.hyperparameter_optimization import get_hyperparameters
 
 
-def train_model(train_data: pd.Series, branch: str, freq: str = 'W-MON',
-                use_optimization: bool = True, n_trials: int = 10) -> Optional[object]:
+def train_model(
+    train_data: pd.Series,
+    branch: str,
+    freq: str = 'W-MON',
+    use_optimization: bool = True,
+    n_trials: int = 10,
+    anomaly_labels: Optional[pd.Series] = None,
+    anomaly_severity: Optional[pd.Series] = None,
+    yoy_growth: Optional[pd.Series] = None
+) -> Optional[object]:
     """
-    Train Prophet model.
+    Train Prophet model with YoY growth component.
     
     Args:
         train_data: Training time series
         branch: Branch name
         freq: Frequency string
+        anomaly_labels: Anomaly labels (optional, for future use)
+        anomaly_severity: Anomaly severity scores (optional, for future use)
+        yoy_growth: Year-over-year growth rates
         
     Returns:
         Trained model or None if training fails
@@ -48,6 +59,11 @@ def train_model(train_data: pd.Series, branch: str, freq: str = 'W-MON',
             'ds': train_data.index,
             'y': train_data.values
         })
+        
+        # Add YoY growth as regressor if provided
+        if yoy_growth is not None and len(yoy_growth) > 0:
+            yoy_aligned = yoy_growth.reindex(df['ds'], fill_value=0)
+            df['yoy_growth'] = yoy_aligned.values
         
         # Get optimized hyperparameters
         if use_optimization:
@@ -85,14 +101,31 @@ def train_model(train_data: pd.Series, branch: str, freq: str = 'W-MON',
             seasonality_prior_scale=seasonality_prior_scale
         )
         
+        # Add YoY growth regressor if available
+        if 'yoy_growth' in df.columns:
+            model.add_regressor('yoy_growth')
+        
         model.fit(df)
+        
+        # Store metadata for forecasting
+        model.yoy_growth_available = 'yoy_growth' in df.columns
+        if model.yoy_growth_available:
+            # Store last YoY growth value for forecasting
+            model.last_yoy_growth = df['yoy_growth'].iloc[-1] if len(df) > 0 else 0.0
+        
         return model
     except Exception as e:
         print(f"Error training Prophet for {branch}: {e}")
         return None
 
 
-def forecast(model: object, n_periods: int, freq: str = 'W-MON', branch: str = None) -> pd.Series:
+def forecast(
+    model: object,
+    n_periods: int,
+    freq: str = 'W-MON',
+    branch: str = None,
+    yoy_growth: Optional[pd.Series] = None
+) -> pd.Series:
     """
     Generate forecast using trained model.
     
@@ -101,6 +134,7 @@ def forecast(model: object, n_periods: int, freq: str = 'W-MON', branch: str = N
         n_periods: Number of periods to forecast
         freq: Frequency string
         branch: Branch name (not used)
+        yoy_growth: YoY growth rates for forecast period (optional)
         
     Returns:
         Forecast series with Date index
@@ -118,6 +152,18 @@ def forecast(model: object, n_periods: int, freq: str = 'W-MON', branch: str = N
             period = 'W'
         
         future = model.make_future_dataframe(periods=n_periods, freq=period)
+        
+        # Add YoY growth regressor if model was trained with it
+        if hasattr(model, 'yoy_growth_available') and model.yoy_growth_available:
+            if yoy_growth is not None and len(yoy_growth) > 0:
+                # Use provided YoY growth
+                yoy_aligned = yoy_growth.reindex(future['ds'], method='ffill', fill_value=0)
+                future['yoy_growth'] = yoy_aligned.values
+            else:
+                # Use last known YoY growth value (simple extrapolation)
+                last_yoy = getattr(model, 'last_yoy_growth', 0.0)
+                future['yoy_growth'] = last_yoy
+        
         forecast_df = model.predict(future)
         
         # Extract only the forecasted periods

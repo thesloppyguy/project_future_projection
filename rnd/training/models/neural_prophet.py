@@ -25,8 +25,16 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 from training.hyperparameter_optimization import get_hyperparameters
 
 
-def train_model(train_data: pd.Series, branch: str, freq: str = 'W-MON',
-                use_optimization: bool = True, n_trials: int = 10) -> Optional[object]:
+def train_model(
+    train_data: pd.Series,
+    branch: str,
+    freq: str = 'W-MON',
+    use_optimization: bool = True,
+    n_trials: int = 10,
+    anomaly_labels: Optional[pd.Series] = None,
+    anomaly_severity: Optional[pd.Series] = None,
+    yoy_growth: Optional[pd.Series] = None
+) -> Optional[object]:
     """
     Train Neural Prophet model.
     

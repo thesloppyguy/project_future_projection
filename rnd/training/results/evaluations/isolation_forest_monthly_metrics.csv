@@ -1,6 +1,6 @@
-model,branch,aggregation,rmse,mae,mape,nrmse,r2,n_samples,status
-Isolation Forest,BLR,monthly,,,,,,0,success
-Isolation Forest,COK,monthly,,,,,,0,success
-Isolation Forest,MAA,monthly,,,,,,0,success
-Isolation Forest,SBD,monthly,,,,,,0,success
-Isolation Forest,SBD1,monthly,,,,,,0,success
+model,branch,aggregation,rmse,mae,mape,nrmse,r2,n_samples,anomaly_rate,mean_anomaly_severity,max_anomaly_severity,status
+Isolation Forest,BLR,monthly,3122.5648784724044,2442.7195405127286,33.295261859121766,49.353008984864935,-1.5770654780310385,3,1.0,0.32240744008241834,0.4,success
+Isolation Forest,COK,monthly,6037.222381330678,5196.562889008257,62.51951132759711,80.95685295902037,-2.8594738916184057,3,1.0,0.3113513929151289,0.4,success
+Isolation Forest,MAA,monthly,9229.645220061107,8722.776061640594,52.97272011543915,57.63845138363271,-8.361622344270526,3,1.0,0.21126240216393702,0.3226738267478087,success
+Isolation Forest,SBD,monthly,10689.154602705215,6967.016704722129,26.819663336069937,58.20605849765968,-0.509569147724418,3,1.0,0.24305873252964064,0.4,success
+Isolation Forest,SBD1,monthly,9492.850852504584,7596.439034726405,51.121808283779735,85.54172941701836,-1.7075175602202863,3,1.0,0.2674505971158672,0.4,success
