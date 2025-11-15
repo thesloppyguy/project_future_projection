@@ -30,7 +30,7 @@ BLIND_END_DATE = "2025-05-31"  # End of available blind data
 MISSING_MONTH = "2020-04"
 
 # Forecast horizon
-FORECAST_HORIZON_MONTHS = 12
+FORECAST_HORIZON_MONTHS = 15
 
 # Aggregation levels
 AGGREGATION_LEVELS = ["combined", "branch_wise"]

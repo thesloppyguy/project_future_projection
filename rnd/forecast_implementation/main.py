@@ -202,6 +202,7 @@ class ForecastingPipeline:
         )
 
         calibration_results = {}
+        model_performance = {}  # Track performance for best model selection
 
         for model_name in MODELS_TO_TRAIN:
             logger.info(f"  Calibrating {model_name}...")
@@ -226,12 +227,69 @@ class ForecastingPipeline:
                     avg_mae = np.mean(
                         [m["mae"] for m in results["metrics"] if not np.isnan(m["mae"])]
                     )
-                    logger.info(
-                        f"    Average RMSE: {avg_rmse:.2f}, Average MAE: {avg_mae:.2f}"
+                    avg_mape = np.mean(
+                        [
+                            m["mape"]
+                            for m in results["metrics"]
+                            if not np.isnan(m["mape"])
+                        ]
                     )
+                    logger.info(
+                        f"    Average RMSE: {avg_rmse:.2f}, Average MAE: {avg_mae:.2f}, "
+                        f"Average MAPE: {avg_mape:.2f}%"
+                    )
+
+                    # Store performance for comparison
+                    if not np.isnan(avg_rmse):
+                        model_performance[model_name] = {
+                            "avg_rmse": avg_rmse,
+                            "avg_mae": avg_mae,
+                            "avg_mape": avg_mape,
+                        }
             except Exception as e:
                 logger.error(f"    Error calibrating {model_name}: {e}")
                 continue
+
+        # Identify and log the best model on calibration window
+        if len(model_performance) > 0:
+            # Sort by RMSE (lower is better)
+            sorted_models = sorted(
+                model_performance.items(), key=lambda x: x[1]["avg_rmse"]
+            )
+            best_model_name, best_model_metrics = sorted_models[0]
+
+            logger.info("")
+            logger.info(f"  {'=' * 60}")
+            logger.info(f"  CALIBRATION WINDOW RESULTS for {series_key}")
+            logger.info(f"  {'=' * 60}")
+            logger.info(f"  Best Model (by RMSE): {best_model_name}")
+            logger.info(
+                f"    RMSE: {best_model_metrics['avg_rmse']:.2f}, "
+                f"MAE: {best_model_metrics['avg_mae']:.2f}, "
+                f"MAPE: {best_model_metrics['avg_mape']:.2f}%"
+            )
+            logger.info("")
+            logger.info("  All Models Performance (sorted by RMSE):")
+            for rank, (model_name, metrics) in enumerate(sorted_models, 1):
+                marker = " <-- BEST" if rank == 1 else ""
+                logger.info(
+                    f"    {rank}. {model_name}: "
+                    f"RMSE={metrics['avg_rmse']:.2f}, "
+                    f"MAE={metrics['avg_mae']:.2f}, "
+                    f"MAPE={metrics['avg_mape']:.2f}%{marker}"
+                )
+            logger.info(f"  {'=' * 60}")
+            logger.info("")
+
+            # Store best model info in calibration results
+            calibration_results["_best_model"] = {
+                "model_name": best_model_name,
+                "metrics": best_model_metrics,
+                "all_models_ranked": [
+                    {"rank": i + 1, "model": name, **metrics}
+                    for i, (name, metrics) in enumerate(sorted_models)
+                ],
+            }
 
         self.calibration_results[series_key] = calibration_results
 
@@ -625,8 +683,15 @@ class ForecastingPipeline:
         calibration_dir = results_dir / "calibration"
         calibration_dir.mkdir(exist_ok=True)
 
+        # Create calibration summary with best model information
+        calibration_summary_data = []
+
         for series_key, cal_results in self.calibration_results.items():
             for model_name, results in cal_results.items():
+                # Skip the best model metadata entry
+                if model_name == "_best_model":
+                    continue
+
                 # Save metrics
                 if "metrics_df" in results and len(results["metrics_df"]) > 0:
                     results["metrics_df"].to_csv(
@@ -639,6 +704,87 @@ class ForecastingPipeline:
                     results["all_forecasts"].to_csv(
                         calibration_dir / f"{series_key}_{model_name}_forecasts.csv",
                         index=False,
+                    )
+
+            # Extract best model information if available
+            if "_best_model" in cal_results:
+                best_model_info = cal_results["_best_model"]
+                for model_rank in best_model_info["all_models_ranked"]:
+                    calibration_summary_data.append(
+                        {
+                            "series_key": series_key,
+                            "model": model_rank["model"],
+                            "rank": model_rank["rank"],
+                            "avg_rmse": model_rank["avg_rmse"],
+                            "avg_mae": model_rank["avg_mae"],
+                            "avg_mape": model_rank["avg_mape"],
+                            "is_best": model_rank["rank"] == 1,
+                        }
+                    )
+
+        # Save calibration summary
+        if len(calibration_summary_data) > 0:
+            calibration_summary_df = pd.DataFrame(calibration_summary_data)
+            calibration_summary_df = calibration_summary_df.sort_values(
+                ["series_key", "rank"]
+            )
+            calibration_summary_df.to_csv(
+                calibration_dir / "calibration_summary.csv", index=False
+            )
+            logger.info(
+                f"Calibration summary saved to {calibration_dir / 'calibration_summary.csv'}"
+            )
+
+            # Create branch-wise summary (extract branch from series_key)
+            branch_wise_data = []
+            for row in calibration_summary_data:
+                series_key = row["series_key"]
+                # Check if this is a branch-wise series (format: freq_agg_level_branch)
+                if "_branch_wise_" in series_key:
+                    parts = series_key.split("_branch_wise_")
+                    if len(parts) == 2:
+                        freq_agg = parts[0]  # e.g., "monthly" or "weekly"
+                        branch = parts[1]  # e.g., "BLR", "MAA"
+                        branch_wise_data.append(
+                            {
+                                "frequency": freq_agg.split("_")[0]
+                                if "_" in freq_agg
+                                else freq_agg,
+                                "branch": branch,
+                                "model": row["model"],
+                                "rank": row["rank"],
+                                "avg_rmse": row["avg_rmse"],
+                                "avg_mae": row["avg_mae"],
+                                "avg_mape": row["avg_mape"],
+                                "is_best": row["is_best"],
+                            }
+                        )
+
+            if len(branch_wise_data) > 0:
+                branch_wise_df = pd.DataFrame(branch_wise_data)
+                branch_wise_df = branch_wise_df.sort_values(
+                    ["frequency", "branch", "rank"]
+                )
+                branch_wise_df.to_csv(
+                    calibration_dir / "branch_wise_calibration_summary.csv", index=False
+                )
+                logger.info(
+                    f"Branch-wise calibration summary saved to {calibration_dir / 'branch_wise_calibration_summary.csv'}"
+                )
+
+                # Create a best models per branch summary
+                best_models_per_branch = branch_wise_df[
+                    branch_wise_df["is_best"]
+                ].copy()
+                if len(best_models_per_branch) > 0:
+                    best_models_per_branch = best_models_per_branch.sort_values(
+                        ["frequency", "branch"]
+                    )
+                    best_models_per_branch.to_csv(
+                        calibration_dir / "best_models_per_branch.csv", index=False
+                    )
+                    logger.info(
+                        f"Best models per branch saved to {calibration_dir / 'best_models_per_branch.csv'}"
                     )
 
         # Save final forecasts
